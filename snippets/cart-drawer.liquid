@@ -51,37 +51,12 @@
             {{ settings.empty_cart_button_text | default: 'SHOP NOW' }}
           </a>
 
-          {% capture secondary_buttons %}
-            {% if settings.empty_cart_menu_handle != blank and linklists[settings.empty_cart_menu_handle].links.size > 0 %}
-              {% for link in linklists[settings.empty_cart_menu_handle].links %}
+          {% assign empty_menu_handle = settings.empty_cart_menu_handle | default: 'empty-cart-buttons' %}
+          {% if empty_menu_handle != blank and linklists[empty_menu_handle] != blank and linklists[empty_menu_handle].links.size > 0 %}
+            <div class="cart-drawer__empty-grid">
+              {% for link in linklists[empty_menu_handle].links %}
                 <a href="{{ link.url }}" class="cart-drawer__empty-btn">{{ link.title }}</a>
               {% endfor %}
-            {% else %}
-              {% if settings.empty_cart_btn_1_text != blank %}
-                <a href="{{ settings.empty_cart_btn_1_link | default: '#' }}" class="cart-drawer__empty-btn">{{ settings.empty_cart_btn_1_text }}</a>
-              {% endif %}
-              {% if settings.empty_cart_btn_2_text != blank %}
-                <a href="{{ settings.empty_cart_btn_2_link | default: '#' }}" class="cart-drawer__empty-btn">{{ settings.empty_cart_btn_2_text }}</a>
-              {% endif %}
-              {% if settings.empty_cart_btn_3_text != blank %}
-                <a href="{{ settings.empty_cart_btn_3_link | default: '#' }}" class="cart-drawer__empty-btn">{{ settings.empty_cart_btn_3_text }}</a>
-              {% endif %}
-              {% if settings.empty_cart_btn_4_text != blank %}
-                <a href="{{ settings.empty_cart_btn_4_link | default: '#' }}" class="cart-drawer__empty-btn">{{ settings.empty_cart_btn_4_text }}</a>
-              {% endif %}
-              {% if settings.empty_cart_btn_5_text != blank %}
-                <a href="{{ settings.empty_cart_btn_5_link | default: '#' }}" class="cart-drawer__empty-btn">{{ settings.empty_cart_btn_5_text }}</a>
-              {% endif %}
-              {% if settings.empty_cart_btn_6_text != blank %}
-                <a href="{{ settings.empty_cart_btn_6_link | default: '#' }}" class="cart-drawer__empty-btn">{{ settings.empty_cart_btn_6_text }}</a>
-              {% endif %}
-            {% endif %}
-          {% endcapture %}
-
-          {% assign stripped_secondary_buttons = secondary_buttons | strip %}
-          {% if stripped_secondary_buttons != blank %}
-            <div class="cart-drawer__empty-grid">
-              {{ secondary_buttons }}
             </div>
           {% endif %}
         </div>

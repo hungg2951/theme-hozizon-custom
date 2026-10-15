@@ -1578,74 +1578,11 @@
         "default": "/collections/all"
       },
       {
-        "type": "paragraph",
-        "content": "Secondary buttons (leave empty to hide)"
-      },
-      {
-        "type": "text",
-        "id": "empty_cart_btn_1_text",
-        "label": "Button 1 label"
-      },
-      {
-        "type": "url",
-        "id": "empty_cart_btn_1_link",
-        "label": "Button 1 link"
-      },
-      {
-        "type": "text",
-        "id": "empty_cart_btn_2_text",
-        "label": "Button 2 label"
-      },
-      {
-        "type": "url",
-        "id": "empty_cart_btn_2_link",
-        "label": "Button 2 link"
-      },
-      {
-        "type": "text",
-        "id": "empty_cart_btn_3_text",
-        "label": "Button 3 label"
-      },
-      {
-        "type": "url",
-        "id": "empty_cart_btn_3_link",
-        "label": "Button 3 link"
-      },
-      {
-        "type": "text",
-        "id": "empty_cart_btn_4_text",
-        "label": "Button 4 label"
-      },
-      {
-        "type": "url",
-        "id": "empty_cart_btn_4_link",
-        "label": "Button 4 link"
-      },
-      {
-        "type": "text",
-        "id": "empty_cart_btn_5_text",
-        "label": "Button 5 label"
-      },
-      {
-        "type": "url",
-        "id": "empty_cart_btn_5_link",
-        "label": "Button 5 link"
-      },
-      {
-        "type": "text",
-        "id": "empty_cart_btn_6_text",
-        "label": "Button 6 label"
-      },
-      {
-        "type": "url",
-        "id": "empty_cart_btn_6_link",
-        "label": "Button 6 link"
-      },
-      {
         "type": "text",
         "id": "empty_cart_menu_handle",
-        "label": "Or Navigation Menu Handle (Optional)",
-        "info": "Enter menu handle (e.g. empty-cart-links) to load links from Shopify Navigation"
+        "label": "Secondary buttons menu handle",
+        "info": "Enter the handle of the menu created in Shopify Navigation (default: empty-cart-buttons)",
+        "default": "empty-cart-buttons"
       },
       {
         "type": "header",
