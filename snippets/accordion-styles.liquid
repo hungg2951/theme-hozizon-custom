@@ -1,0 +1,113 @@
+{%- doc -%}
+  Styles for the accordion and accordion row components. Extracted into a
+  snippet so that blocks which use accordion markup without nesting inside an
+  accordion block (e.g. disclosures) can include these styles independently,
+  ensuring they are sent to the client when CSS subsetting is enabled.
+{%- enddoc -%}
+
+{% stylesheet %}
+  .accordion {
+    flex: 1;
+    width: 100%;
+  }
+
+  .accordion--dividers accordion-custom:not(:first-child) .details {
+    border-block-start: var(--style-border-width, 1px) solid var(--color-border, #e5e5e5);
+  }
+
+  /* Fallback borders for first and last child in dividers mode */
+  .accordion--dividers accordion-custom:first-child .details {
+    border-block-start: 1px solid var(--color-border, #e5e5e5);
+  }
+
+  .accordion--dividers accordion-custom:last-child .details {
+    border-block-end: 1px solid var(--color-border, #e5e5e5);
+  }
+
+  .accordion--dividers .details-content {
+    padding-block-start: 6px;
+    padding-block-end: var(--padding-md, 20px);
+    padding-inline-start: 42px;
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-80, 0.8));
+  }
+
+  .accordion--dividers .details-content p {
+    margin-block: 0.35rem;
+  }
+
+  .accordion--dividers .details-content strong {
+    color: var(--color-foreground, #121212);
+    font-weight: 600;
+  }
+
+  .accordion--caret .icon-plus,
+  .accordion--plus .icon-caret {
+    display: none;
+  }
+
+  /* Threadheads accordion row header styling */
+  .accordion .details__header {
+    font-family: var(--summary-font-family, inherit);
+    font-style: var(--summary-font-style, normal);
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 1.4;
+    text-transform: var(--summary-font-case, none);
+    min-height: 54px;
+    padding-block: 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    color: var(--color-foreground, #121212);
+  }
+
+  .accordion .details__header:hover {
+    color: var(--color-foreground, #121212);
+  }
+
+  .accordion .details__icon {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    margin-inline-end: 0;
+  }
+
+  .accordion .details__icon.icon-default {
+    fill: none;
+  }
+
+  /* Circular toggle button */
+  .accordion .details__header .svg-wrapper.icon-caret {
+    margin-inline-start: auto;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    color: #1a1a1a;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .accordion .details__header .svg-wrapper.icon-caret svg {
+    width: 10px;
+    height: 10px;
+    transition: transform var(--animation-speed, 0.25s) var(--animation-easing, ease);
+  }
+
+  /* Active / Open state: black background, white icon */
+  .accordion details[open] > .details__header .svg-wrapper.icon-caret,
+  .accordion .details__header:hover .svg-wrapper.icon-caret {
+    background-color: #1a1a1a;
+    color: #ffffff;
+  }
+
+  .accordion details[open] > .details__header .svg-wrapper.icon-caret svg {
+    transform: rotate(180deg);
+  }
+{% endstylesheet %}

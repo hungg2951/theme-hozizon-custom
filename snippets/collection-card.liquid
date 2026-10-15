@@ -1,0 +1,271 @@
+{%- doc -%}
+  This snippet is used to render a collection card.
+  To be used inside a block to inherit the block object settings.
+
+  @param {string} card_image - The image to display in the collection card
+  @param {string} children - The content to render inside the collection card
+  @param {object} collection - The collection to render the card for
+  @param {object} block - The block object
+  @param {object} section - The section object
+
+  @example
+  {% render 'collection-card',
+    card_image: card_image,
+    children: children,
+    block: block,
+    collection: collection,
+    section: section
+  %}
+{%- enddoc -%}
+
+{% style %}
+  {% if request.visual_preview_mode %}
+    .collection-card {
+      min-width: 250px;
+    }
+  {% endif %}
+{% endstyle %}
+
+{% liquid
+  assign onboarding = false
+  assign block_settings = block.settings
+
+  if collection == blank
+    assign onboarding = true
+  endif
+
+  if block_settings.background_color != blank
+    render 'contrast-override', background_color: block_settings.background_color, section_id: block.id
+  endif
+%}
+
+<div
+  class="
+    collection-card
+    border-style
+    {% if block_settings.placement == 'on_image' %}collection-card--image-bg{% endif %}
+    {% if section.settings.layout_type == 'bento' %}collection-card--image-height-fixed{% endif %}
+    {% if section.settings.layout_type == 'editorial' %}collection-card--flexible-aspect-ratio{% endif %}
+    {% if block_settings.background_color != blank %} color-custom-{{ block.id }}{% endif %}
+  "
+  data-block-id="{{ block.id }}"
+  {% if onboarding %}
+    data-placeholder="true"
+  {% endif %}
+  style="
+    {% render 'border-override', settings: block_settings %}
+    --horizontal-alignment: {{ block_settings.horizontal_alignment }};
+    --vertical-alignment: {{ block_settings.vertical_alignment }};
+    --gap: {{ block_settings.collection_card_gap }}px;
+  "
+  {{- block.shopify_attributes -}}
+>
+  <a
+    class="collection-card__link"
+    {% unless onboarding %}
+      href="{{ collection.url }}"
+    {% endunless %}
+  >
+    <span class="visually-hidden">{{ collection.title }}</span>
+  </a>
+  <div class="collection-card__inner">
+    {{ card_image }}
+    <div class="collection-card__content layout-panel-flex--column">
+      <div class="collection-card__hover-btn" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </div>
+      {{ children }}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .collection-card {
+    --fixed-card-height: var(--height-small);
+
+    width: 100%;
+    position: relative;
+    height: 100%;
+    flex: 1 1 var(--card-width-small);
+  }
+
+  .collection-card > svg {
+    height: 100%;
+    width: 100%;
+    aspect-ratio: var(--ratio);
+  }
+
+  .collection-card--image-bg .collection-card__inner {
+    height: 100%;
+  }
+
+  .collection-card__link {
+    position: absolute;
+    inset: 0;
+
+    /* allows focus outline to have radius in supported browsers */
+    border-radius: var(--border-radius);
+  }
+
+  .collection-card__inner {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    z-index: var(--layer-flat);
+    pointer-events: none;
+    gap: var(--gap);
+
+    a,
+    button {
+      pointer-events: auto;
+    }
+  }
+
+  /* allow all blocks to be selectable in editor preview */
+  .shopify-design-mode .collection-card__content * {
+    pointer-events: auto;
+  }
+
+  .collection-card__content {
+    --flex-wrap: wrap;
+
+    display: flex;
+    position: relative;
+    height: 100%;
+    width: 100%;
+    max-width: 100%;
+    gap: var(--gap);
+  }
+
+  /* Nested image block rules */
+
+  .collection-card.collection-card--image-bg {
+    aspect-ratio: 1 / 1.08;
+    border-radius: var(--border-radius, 8px);
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .collection-card.collection-card--image-bg .collection-card__inner {
+    border-radius: var(--border-radius, 8px);
+    overflow: hidden;
+  }
+
+  .collection-card .resource-image__image,
+  .collection-card .collection-card__image img {
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .collection-card:hover .resource-image__image,
+  .collection-card:hover .collection-card__image img {
+    transform: scale(1.05);
+  }
+
+  .collection-card.collection-card--image-bg .collection-card__content {
+    padding: var(--padding-lg) var(--padding-md) 24px;
+    justify-content: flex-end;
+    align-items: center;
+    background: transparent;
+  }
+
+  .collection-card__hover-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    color: #000000;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    margin-bottom: 14px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  }
+
+  .collection-card:hover .collection-card__hover-btn {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .collection-card.collection-card--image-bg .collection-card__content p,
+  .collection-card.collection-card--image-bg .collection-card__content h2,
+  .collection-card.collection-card--image-bg .collection-card__content h3,
+  .collection-card.collection-card--image-bg .collection-card__content .text-block {
+    font-family: var(--font-heading--family), "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+    font-size: 26px !important;
+    font-weight: 700 !important;
+    line-height: 1.2 !important;
+    letter-spacing: -0.01em !important;
+    color: #ffffff !important;
+    text-align: center !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
+    margin: 0;
+  }
+
+  .collection-card--image-height-fixed {
+    height: 100%;
+  }
+
+  /* Bento layout rules */
+  .collection-card--image-height-fixed .collection-card__image {
+    height: var(--fixed-card-height);
+    width: 100%;
+  }
+
+  .collection-card--image-height-fixed.collection-card--image-bg {
+    height: var(--fixed-card-height);
+    aspect-ratio: unset;
+  }
+
+  .collection-card__image .resource-image__image {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+  }
+
+  .collection-card--image-bg .collection-card__image {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
+
+  .collection-card__image svg {
+    height: 100%;
+    width: 100%;
+  }
+
+  /* Editorial layout */
+  .resource-list:not(.hidden--desktop) .collection-card--flexible-aspect-ratio {
+    .collection-card__image {
+      aspect-ratio: 99;
+      height: 100%;
+    }
+
+    .collection-card__inner {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .collection-card__content {
+      flex-shrink: 0;
+    }
+
+    &:not(.collection-card--image-bg) .collection-card__content {
+      height: auto;
+    }
+
+    &.collection-card.collection-card--image-bg,
+    &.collection-card .placeholder-svg {
+      aspect-ratio: 99;
+    }
+  }
+{% endstylesheet %}

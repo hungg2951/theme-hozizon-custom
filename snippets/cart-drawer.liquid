@@ -1,0 +1,483 @@
+{% doc %}
+  Renders reusable cart drawer markup for both initial page loads and Section Rendering API responses.
+
+  @param {boolean} [render_wrapper] - When true, wraps the drawer in the section wrapper that the Section Rendering API adds automatically.
+{% enddoc %}
+
+{%- liquid
+  assign render_wrapper = render_wrapper | default: true, allow_false: true
+-%}
+
+{%- if settings.cart_type == 'drawer' and template.name != 'cart' -%}
+  {% if render_wrapper %}
+    <div
+      id="shopify-section-cart-drawer-section"
+      class="shopify-section"
+    >
+  {% endif %}
+
+  <script
+    type="module"
+    src="{{ 'cart-drawer.js' | asset_url }}"
+    fetchpriority="low"
+  ></script>
+
+  {% capture empty_cart_drawer_content %}
+    <div
+      class="cart-drawer__content cart-drawer__content--empty"
+      aria-label="{{ 'accessibility.cart' | t }}"
+    >
+      <div class="cart-drawer__empty-container">
+        <div class="cart-drawer__empty-icon-wrap" aria-hidden="true">
+          <svg class="cart-drawer__empty-basket-svg" width="56" height="44" viewBox="0 0 56 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 15V9C19 5.68629 21.6863 3 25 3H31C34.3137 3 37 5.68629 37 9V15" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M4 15H52L46.5 41H9.5L4 15Z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>
+          </svg>
+          <span class="cart-drawer__empty-icon-badge">0</span>
+        </div>
+
+        <h2
+          class="cart-drawer__empty-title"
+          id="cart-drawer-heading"
+        >
+          {{ 'content.your_cart_is_empty' | t }}
+        </h2>
+
+        <div class="cart-drawer__empty-actions">
+          <a
+            class="cart-drawer__empty-shop-now"
+            href="{{ settings.empty_cart_button_link | default: routes.all_products_collection_url }}"
+          >
+            {{ settings.empty_cart_button_text | default: 'SHOP NOW' }}
+          </a>
+
+          {% capture secondary_buttons %}
+            {% if settings.empty_cart_menu_handle != blank and linklists[settings.empty_cart_menu_handle].links.size > 0 %}
+              {% for link in linklists[settings.empty_cart_menu_handle].links %}
+                <a href="{{ link.url }}" class="cart-drawer__empty-btn">{{ link.title }}</a>
+              {% endfor %}
+            {% else %}
+              {% if settings.empty_cart_btn_1_text != blank %}
+                <a href="{{ settings.empty_cart_btn_1_link | default: '#' }}" class="cart-drawer__empty-btn">{{ settings.empty_cart_btn_1_text }}</a>
+              {% endif %}
+              {% if settings.empty_cart_btn_2_text != blank %}
+                <a href="{{ settings.empty_cart_btn_2_link | default: '#' }}" class="cart-drawer__empty-btn">{{ settings.empty_cart_btn_2_text }}</a>
+              {% endif %}
+              {% if settings.empty_cart_btn_3_text != blank %}
+                <a href="{{ settings.empty_cart_btn_3_link | default: '#' }}" class="cart-drawer__empty-btn">{{ settings.empty_cart_btn_3_text }}</a>
+              {% endif %}
+              {% if settings.empty_cart_btn_4_text != blank %}
+                <a href="{{ settings.empty_cart_btn_4_link | default: '#' }}" class="cart-drawer__empty-btn">{{ settings.empty_cart_btn_4_text }}</a>
+              {% endif %}
+              {% if settings.empty_cart_btn_5_text != blank %}
+                <a href="{{ settings.empty_cart_btn_5_link | default: '#' }}" class="cart-drawer__empty-btn">{{ settings.empty_cart_btn_5_text }}</a>
+              {% endif %}
+              {% if settings.empty_cart_btn_6_text != blank %}
+                <a href="{{ settings.empty_cart_btn_6_link | default: '#' }}" class="cart-drawer__empty-btn">{{ settings.empty_cart_btn_6_text }}</a>
+              {% endif %}
+            {% endif %}
+          {% endcapture %}
+
+          {% assign stripped_secondary_buttons = secondary_buttons | strip %}
+          {% if stripped_secondary_buttons != blank %}
+            <div class="cart-drawer__empty-grid">
+              {{ secondary_buttons }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  {% endcapture %}
+
+  <theme-drawer
+    id="cart-drawer"
+    data-skip-node-update
+    modal
+  >
+    <dialog
+      ref="panel"
+      class="theme-drawer__dialog color-custom-drawer"
+      aria-labelledby="cart-drawer-heading"
+      cart-summary-sticky="true"
+    >
+      <cart-drawer-component
+        {% if settings.auto_open_cart_drawer and template.name != 'cart' %}
+          auto-open
+        {% endif %}
+      >
+        <template id="empty-cart-template">
+          {{ empty_cart_drawer_content }}
+        </template>
+
+        <div
+          class="cart-drawer__inner{% if cart.empty? %} cart-drawer--empty{% endif %}"
+          data-hydration-key="cart-drawer-inner"
+        >
+          {%- if cart.empty? -%}
+            <div class="theme-drawer__header">
+              <button
+                on:click="#cart-drawer/close"
+                class="theme-drawer__close-button cart-drawer__close-button--empty"
+                type="button"
+                aria-label="{{ 'actions.close' | t }}"
+              >
+                <span class="svg-wrapper">
+                  {{- 'icon-close.svg' | inline_asset_content -}}
+                </span>
+              </button>
+            </div>
+          {%- else -%}
+            {% capture cart_badge_html %}
+              <span
+                class="theme-drawer__badge{% if cart.item_count == 0 %} visually-hidden{% endif %}"
+                aria-hidden="true"
+                {% if cart.item_count <= 99 %}
+                  data-maintain-ratio
+                {% endif %}
+              >
+                {{- cart.item_count -}}
+              </span>
+              {% if cart.item_count > 0 %}
+                <span class="visually-hidden">
+                  {{ 'accessibility.cart_count' | t }}: {{ cart.item_count }}
+                </span>
+              {% endif %}
+            {% endcapture %}
+            {% assign cart_drawer_title = 'content.cart_title' | t %}
+            {% render 'theme-drawer-header',
+              title: cart_drawer_title,
+              drawer_id: 'cart-drawer',
+              heading_id: 'cart-drawer-heading',
+              title_append: cart_badge_html
+            %}
+          {%- endif -%}
+
+          {% capture cart_items_children %}
+            {%- if cart.empty? -%}
+              {{ empty_cart_drawer_content }}
+            {%- else -%}
+              <scroll-hint
+                class="cart-drawer__content"
+                aria-label="{{ 'accessibility.cart' | t }}"
+              >
+                <scroll-hint class="cart-drawer__items">
+                  {% render 'cart-products', context: 'drawer' %}
+                </scroll-hint>
+
+                <div class="cart-drawer__summary">
+                  {% render 'cart-summary', section_id: 'cart-drawer-section' %}
+                </div>
+              </scroll-hint>
+            {%- endif -%}
+          {% endcapture %}
+          {% render 'cart-items-component',
+            children: cart_items_children,
+            is_drawer: true,
+            section_id: 'cart-drawer-section'
+          %}
+        </div>
+      </cart-drawer-component>
+    </dialog>
+  </theme-drawer>
+
+  {% if render_wrapper %}
+    </div>
+  {% endif %}
+{%- endif -%}
+
+{% stylesheet %}
+  cart-drawer-component {
+    --cart-drawer-padding: var(--theme-drawer-padding);
+    --font-paragraph--line-height: 1;
+    display: contents;
+  }
+
+  .cart-drawer__inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .cart-drawer__inner > .cart-items-component {
+    flex: 1;
+    min-height: 0;
+    height: auto;
+  }
+
+  .cart-drawer__content {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    background-color: var(--color-background);
+    flex-grow: 1;
+    overflow-y: auto;
+  }
+
+  .cart-drawer__items {
+    display: flex;
+    flex-direction: column;
+    padding-inline: var(--cart-drawer-padding);
+    overflow-y: auto;
+  }
+
+  .cart-drawer__items .cart-items__table-row {
+    padding-bottom: var(--gap-xl);
+    border-bottom: var(--style-border-width) solid rgb(var(--color-foreground-rgb) / var(--opacity-10-25));
+    margin-bottom: var(--gap-xl);
+  }
+
+  .cart-drawer__items .cart-items__table-row:has(+ .cart-items__nested-line) {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+
+  .cart-drawer__items .cart-items__table-row:last-child {
+    border-bottom: none;
+    padding-block-end: 0;
+    margin-block-end: 0;
+  }
+
+  .cart-drawer__close-button--empty {
+    margin-inline-start: auto;
+  }
+
+  .cart-drawer__summary {
+    --cart-drawer-summary-padding: var(--padding-lg);
+
+    position: sticky;
+    bottom: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--gap-xl);
+    padding: var(--cart-drawer-summary-padding);
+    margin-top: auto;
+    background-color: var(--color-background);
+    /* stylelint-disable-next-line color-named */
+    mask-image: linear-gradient(to bottom, transparent, black var(--cart-drawer-summary-padding));
+
+    @media screen and (min-width: 750px) {
+      --cart-drawer-summary-padding: var(--padding-2xl);
+    }
+  }
+
+  .theme-drawer__dialog[cart-summary-sticky='false'] .cart-drawer__summary {
+    position: static;
+    mask-image: none;
+  }
+
+  .theme-drawer__dialog[cart-summary-sticky='false'] .cart-drawer__items {
+    overflow: unset;
+  }
+
+  .cart-actions summary {
+    padding-inline: 0;
+    padding-block: var(--padding-sm);
+    line-height: 1.2;
+    min-height: var(--minimum-touch-target);
+  }
+
+  .cart-drawer__summary .cart__summary-totals:not(:has(.cart__subtotal-container:empty)) {
+    border-block-start: var(--style-border-width) solid rgb(var(--color-foreground-rgb) / var(--opacity-10-25));
+    padding-block-start: var(--padding-2xl);
+  }
+
+  .cart-drawer__summary .cart-note {
+    @media screen and (min-width: 750px) {
+      margin-block-start: var(--margin-3xs);
+    }
+  }
+
+  .cart-drawer--empty .cart-drawer__content {
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    min-height: auto;
+  }
+
+  .cart-drawer--empty .cart-drawer__items {
+    padding-inline: 0;
+  }
+
+  cart-drawer-component:not(:has(.cart-form)) .cart-drawer__content {
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+  }
+
+  cart-drawer-component:not(:has(.cart-form)) .cart-drawer__items {
+    padding-inline: 0;
+  }
+
+  @media screen and (prefers-reduced-motion: no-preference) {
+    html:active-view-transition-type(empty-cart-drawer) {
+      .theme-drawer__close-button {
+        view-transition-name: cart-drawer-close-button;
+      }
+    }
+  }
+
+  :active-view-transition {
+    .cart-drawer__header,
+    .cart-drawer__content {
+      background: transparent;
+    }
+  }
+
+  /* Threadheads Cart Drawer Overlay & Empty State Styling */
+  #cart-drawer .theme-drawer__dialog {
+    --theme-drawer-width: min(100vw, 480px);
+    box-shadow: -4px 0 30px rgba(0, 0, 0, 0.2);
+  }
+
+  #cart-drawer .theme-drawer__header {
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  #cart-drawer .theme-drawer__close-button {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    color: var(--color-foreground, #1a1a1a);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  #cart-drawer .theme-drawer__close-button:hover {
+    opacity: 0.7;
+    background: transparent;
+  }
+
+  #cart-drawer .theme-drawer__close-button .svg-wrapper {
+    width: 16px;
+    height: 16px;
+  }
+
+  .cart-drawer__content--empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  .cart-drawer__empty-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 290px;
+    margin: auto;
+  }
+
+  .cart-drawer__empty-icon-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    color: var(--color-foreground, #1a1a1a);
+  }
+
+  .cart-drawer__empty-basket-svg {
+    width: 58px;
+    height: 46px;
+    display: block;
+  }
+
+  .cart-drawer__empty-icon-badge {
+    position: absolute;
+    top: -4px;
+    right: 4px;
+    width: 18px;
+    height: 18px;
+    background-color: var(--color-foreground, #1a1a1a);
+    color: var(--color-background, #ffffff);
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  .cart-drawer__empty-title {
+    font-family: var(--font-heading--family);
+    font-size: 1.375rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--color-foreground, #1a1a1a);
+    margin: 0 0 1.5rem;
+    text-align: center;
+  }
+
+  .cart-drawer__empty-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    width: 100%;
+  }
+
+  .cart-drawer__empty-shop-now {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 48px;
+    background-color: var(--color-foreground, #1a1a1a);
+    color: var(--color-background, #ffffff);
+    font-size: 0.8125rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: opacity 0.15s ease;
+  }
+
+  .cart-drawer__empty-shop-now:hover {
+    opacity: 0.88;
+  }
+
+  .cart-drawer__empty-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .cart-drawer__empty-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 42px;
+    background-color: var(--color-background, #ffffff);
+    border: 1px solid var(--color-foreground, #1a1a1a);
+    color: var(--color-foreground, #1a1a1a);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  .cart-drawer__empty-btn:hover {
+    background-color: var(--color-foreground, #1a1a1a);
+    color: var(--color-background, #ffffff);
+  }
+{% endstylesheet %}

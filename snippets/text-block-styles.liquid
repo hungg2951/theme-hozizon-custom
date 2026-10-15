@@ -1,0 +1,169 @@
+{%- doc -%}
+  Shared base styles for elements that emit `.text-block` directly.
+
+  This owns base `.text-block` sizing, text-wrap, heading/paragraph spacing,
+  edge-margin resets, and helper classes like `.text-block--align-*`,
+  `.text-block--background`, and `.custom-color`. `snippets/text.liquid` keeps
+  only its text-snippet-specific flex and child layout rules.
+
+  Files that directly emit `.text-block` should render this snippet unless they
+  render `snippets/text.liquid`, which renders it for them. Dynamic entry points
+  that can inject product content without injecting response stylesheets, like
+  Quick Add and empty product grids, should preload it too.
+
+  @example
+  {% render 'text-block-styles' %}
+{%- enddoc -%}
+
+{% stylesheet %}
+  .text-block {
+    width: var(--width, 100%);
+  }
+
+  .text-block--align-center,
+  .text-block--align-center > * {
+    margin-inline: auto;
+  }
+
+  .text-block--align-right,
+  .text-block--align-right > * {
+    margin-inline-start: auto;
+  }
+
+  .text-block--background {
+    background-color: var(--text-background-color);
+    border-radius: var(--text-corner-radius);
+
+    /* To avoid text being cropped when using a border radius we add a minimum padding. */
+    padding-block-start: max(var(--text-padding), var(--padding-block-start, 0));
+    padding-block-end: max(var(--text-padding), var(--padding-block-end, 0));
+    padding-inline-start: max(var(--text-padding), var(--padding-inline-start, 0));
+    padding-inline-end: max(var(--text-padding), var(--padding-inline-end, 0));
+  }
+
+  .custom-color,
+  .custom-color > :is(h1, h2, h3, h4, h5, h6, p, *) {
+    color: var(--color);
+  }
+
+  .text-block:not(.text-block--full-width).rte,
+  .text-block:not(.text-block--full-width).paragraph {
+    /* Safari doesn't support pretty, so fallback to balance */
+    text-wrap: balance;
+    text-wrap: pretty;
+  }
+
+  .text-block:not(.text-block--full-width):is(.h1, .h2, .h3, .h4, .h5, .h6) {
+    text-wrap: balance;
+  }
+
+  /* Hide underline unless text is using paragraph styles. The doubled class beats the global paragraph-link styles in base.css. */
+  .text-block.text-block:is(.h1, .h2, .h3, .h4, .h5, .h6) a {
+    text-decoration-line: none;
+    color: currentColor;
+
+    &:hover {
+      text-decoration-line: none;
+      color: currentColor;
+    }
+  }
+
+  .text-block h1,
+  .text-block.h1 > * {
+    margin-block: var(--font-h1--spacing);
+  }
+
+  .text-block h2,
+  .text-block.h2 > * {
+    margin-block: var(--font-h2--spacing);
+  }
+
+  .text-block h3,
+  .text-block.h3 > * {
+    margin-block: var(--font-h3--spacing);
+  }
+
+  .text-block h4,
+  .text-block.h4 > * {
+    margin-block: var(--font-h4--spacing);
+  }
+
+  .text-block h5,
+  .text-block.h5 > * {
+    margin-block: var(--font-h5--spacing);
+  }
+
+  .text-block h6,
+  .text-block.h6 > * {
+    margin-block: var(--font-h6--spacing);
+  }
+
+  .text-block p,
+  .text-block.p > * {
+    margin-block: var(--font-paragraph--spacing);
+  }
+
+  /* The doubled class lets these edge resets beat heading/paragraph margins without relying on source order. */
+  .text-block.text-block > *:last-child,
+  .text-block.text-block > *:has(+ *:last-child:empty) {
+    margin-block-end: 0;
+  }
+
+  .text-block.text-block > style + *,
+  .text-block.text-block > *:first-child,
+  .text-block.text-block > *:first-child:empty + * {
+    margin-block-start: 0;
+  }
+
+  /* Threadheads product features bullet list */
+  .text-block--text_pahPj7 ul,
+  .product-details .text-block.rte ul,
+  .product-features-list {
+    list-style-type: disc !important;
+    padding-inline-start: 1.25rem !important;
+    margin-block: 0.5rem !important;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--color-foreground, #121212);
+  }
+
+  .text-block--text_pahPj7 ul li,
+  .product-details .text-block.rte ul li,
+  .product-features-list li {
+    padding-inline-start: 0.25rem;
+    list-style-type: disc !important;
+  }
+
+  .text-block--text_pahPj7 ul a,
+  .product-details .text-block.rte ul a,
+  .product-features-list a {
+    color: inherit;
+    text-decoration: underline !important;
+    text-underline-offset: 3px;
+    transition: opacity var(--animation-speed, 0.2s) var(--animation-easing, ease);
+  }
+
+  .text-block--text_pahPj7 ul a:hover,
+  .product-details .text-block.rte ul a:hover,
+  .product-features-list a:hover {
+    opacity: 0.7;
+  }
+
+  /* Threadheads product title typography */
+  .product-details .text-block--text_xrnftG h1,
+  .product-details .text-block.h3 :is(h1, .h1),
+  .product-details h1.product-info__title,
+  .product-details .product-title h1 {
+    font-family: var(--font-body--family), "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+    font-size: 26px !important;
+    line-height: 1.2 !important;
+    font-weight: 400 !important;
+    color: #1a1a1a !important;
+    margin-block: 8px !important;
+    letter-spacing: normal !important;
+    text-transform: none !important;
+  }
+{% endstylesheet %}

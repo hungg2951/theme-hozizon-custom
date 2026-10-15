@@ -1,0 +1,104 @@
+{%- doc -%}
+  Intended for use in a block similar to the button block.
+
+  @param {string} link - link to render
+  @param {object} [block] - The block
+
+  @example
+  {% render 'button', link: '/collections/all' %}
+{%- enddoc -%}
+
+{% assign block_settings = block.settings %}
+{% render 'button-custom-styles', block_settings: block_settings, block_id: block.id %}
+
+{% assign has_arrow_circle = false %}
+{% if block_settings.label contains 'View all' or block_settings.label contains 'view all' %}
+  {% assign has_arrow_circle = true %}
+{% endif %}
+
+{% if has_arrow_circle %}
+  {% style %}
+    .button--view-all {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 10px !important;
+      font-size: 14px !important;
+      font-weight: 500 !important;
+      color: #1a1a1a !important;
+      text-decoration: none !important;
+      line-height: 1 !important;
+    }
+
+    .button--view-all .button__text {
+      position: relative;
+      display: inline-block;
+      text-decoration: none !important;
+    }
+
+    .button--view-all .button__text::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -2px;
+      width: 100%;
+      height: 1px;
+      background-color: currentColor;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .button--view-all:hover .button__text::after {
+      transform: scaleX(1);
+    }
+
+    .button--view-all .button__arrow-circle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background-color: #e5e5e5;
+      color: #1a1a1a;
+      flex-shrink: 0;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      text-decoration: none !important;
+    }
+
+    .button--view-all:hover .button__arrow-circle {
+      background-color: #1a1a1a;
+      color: #ffffff;
+    }
+  {% endstyle %}
+{% endif %}
+
+<a
+  {% if link == blank %}
+    role="link"
+    aria-disabled="true"
+  {% else %}
+    href="{{ link }}"
+  {% endif %}
+  class="
+    size-style
+    {{ block_settings.style_class }}
+    {{ block_settings.style_class }}--{{ block.id }}
+    {% if has_arrow_circle %}button--view-all{% endif %}
+  "
+  style="{% render 'size-style', settings: block_settings %}"
+  {%- if block_settings.open_in_new_tab -%}
+    target="_blank"
+    rel="noopener noreferrer"
+  {%- endif -%}
+  {{ block.shopify_attributes }}
+>
+  <span class="button__text">{{ block_settings.label }}</span>
+  {%- if has_arrow_circle -%}
+    <span class="button__arrow-circle" aria-hidden="true">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
+    </span>
+  {%- endif -%}
+</a>
