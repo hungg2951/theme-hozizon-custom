@@ -40,73 +40,140 @@
       </div>
 
       {% if predictive_search.performed %}
-        {% if predictive_search.resources.queries.size > 0 %}
-          <ul
-            class="predictive-search-results__list predictive-search-results__wrapper predictive-search-results__wrapper-queries list-unstyled"
-          >
-            {%- for resource in predictive_search.resources.queries -%}
-              <li
-                class="predictive-search-results__card--query"
-                ref="resultsItems[]"
-                on:keydown="/onSearchKeyDown"
-              >
-                <a
-                  class="pills__pill predictive-search-results__pill"
-                  href="{{ resource.url }}"
-                  aria-label="{{ resource.text }}"
-                >
-                  <span>
-                    {{ resource.styled_text }}
-                  </span>
-                </a>
-              </li>
-            {% endfor %}
-          </ul>
-        {% endif %}
+        {%- if search_results_count == 0 and predictive_search.resources.queries.size == 0 -%}
+          <div class="threadheads-stumped-container">
+            <div class="threadheads-stumped-box">
+              Hmm, "{{ predictive_search.terms }}" stumped us. Here's what's popular right now:
+            </div>
 
-        {%- if search_results_count > 0 -%}
-          {% if predictive_search.resources.products.size > 0 %}
-            {%- liquid
-              assign title = 'content.search_results_resource_products' | t
-              assign products = predictive_search.resources.products
-              render 'predictive-search-products-list', title: title, products: products
-            -%}
-          {% endif %}
+            <div class="threadheads-trending-section">
+              <h3 class="threadheads-trending-title">Trending</h3>
+              <ul class="threadheads-trending-list list-unstyled">
+                <li><a href="{{ routes.search_url }}?q=Looney+Tunes&options%5Bprefix%5D=last">Looney Tunes</a></li>
+                <li><a href="{{ routes.search_url }}?q=oversized+tees&options%5Bprefix%5D=last">oversized tees</a></li>
+                <li><a href="{{ routes.search_url }}?q=custom+t-shirt+printing&options%5Bprefix%5D=last">custom t-shirt printing</a></li>
+                <li><a href="{{ routes.search_url }}?q=blank+tees&options%5Bprefix%5D=last">blank tees</a></li>
+                <li><a href="{{ routes.search_url }}?q=Sesame+Street&options%5Bprefix%5D=last">Sesame Street</a></li>
+              </ul>
+            </div>
 
-          {% if predictive_search.resources.collections.size > 0 %}
-            {% assign resource_title = 'content.search_results_resource_collections' | t %}
-
-            {% render 'predictive-search-resource-carousel',
-              title: resource_title,
-              resource_type: 'collection',
-              resources: predictive_search.resources.collections
+            {% liquid
+              assign fallback_collection = settings.empty_state_collection | default: collections.all | default: collections['all'] | default: collections.first
             %}
-          {% endif %}
+            {% paginate fallback_collection.products by 4 %}
+              {% if fallback_collection.products.size > 0 %}
+                <div class="threadheads-popular-products">
+                  <h3 class="threadheads-trending-title">Products</h3>
+                  {% render 'predictive-search-products-list',
+                    title: '',
+                    products: fallback_collection.products,
+                    limit: 4
+                  %}
+                </div>
+              {% endif %}
+            {% endpaginate %}
+          </div>
+        {%- else -%}
+          <div class="threadheads-search-results">
+            <div class="threadheads-search-results__main">
+              {%- if search_results_count > 0 and predictive_search.resources.products.size > 0 -%}
+                {%- liquid
+                  assign title = 'content.search_results_resource_products' | t
+                  assign products = predictive_search.resources.products
+                  render 'predictive-search-products-list', title: title, products: products, limit: 6
+                -%}
+              {%- endif -%}
+            </div>
 
-          {% if predictive_search.resources.pages.size > 0 %}
-            {% assign resource_title = 'content.search_results_resource_pages' | t %}
+            <div class="threadheads-search-results__sidebar">
+              {% if predictive_search.resources.queries.size > 0 %}
+                <div class="threadheads-search-group">
+                  <h4 class="predictive-search-results__title">
+                    {{ 'content.suggestions' | default: 'SUGGESTIONS' }}
+                  </h4>
+                  <ul
+                    class="predictive-search-results__list predictive-search-results__wrapper predictive-search-results__wrapper-queries list-unstyled threadheads-suggestions-list"
+                  >
+                    {%- for resource in predictive_search.resources.queries -%}
+                      <li
+                        class="predictive-search-results__card--query threadheads-suggestion-item"
+                        ref="resultsItems[]"
+                        on:keydown="/onSearchKeyDown"
+                      >
+                        <a
+                          class="threadheads-suggestion-link"
+                          href="{{ resource.url }}"
+                          aria-label="{{ resource.text }}"
+                        >
+                          {{ resource.styled_text }}
+                        </a>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              {% endif %}
 
-            {% render 'predictive-search-resource-carousel',
-              title: resource_title,
-              resource_type: 'page',
-              resources: predictive_search.resources.pages
-            %}
-          {% endif %}
+              {% if predictive_search.resources.collections.size > 0 %}
+                <div class="threadheads-search-group">
+                  <h4 class="predictive-search-results__title">
+                    {{ 'content.search_results_resource_collections' | t }}
+                  </h4>
+                  <ul class="threadheads-collections-list list-unstyled">
+                    {%- for collection in predictive_search.resources.collections -%}
+                      <li class="threadheads-collection-item" ref="resultsItems[]" on:keydown="/onSearchKeyDown">
+                        <a href="{{ collection.url }}" class="threadheads-collection-link">
+                          {{ collection.title }}
+                        </a>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                </div>
+              {% endif %}
 
-          {% if predictive_search.resources.articles.size > 0 %}
-            {% assign resource_title = 'content.search_results_resource_articles' | t %}
+              {% if predictive_search.resources.pages.size > 0 %}
+                <div class="threadheads-search-group">
+                  <h4 class="predictive-search-results__title">
+                    {{ 'content.search_results_resource_pages' | t }}
+                  </h4>
+                  <ul class="threadheads-collections-list list-unstyled">
+                    {%- for page in predictive_search.resources.pages -%}
+                      <li class="threadheads-collection-item" ref="resultsItems[]" on:keydown="/onSearchKeyDown">
+                        <a href="{{ page.url }}" class="threadheads-collection-link">
+                          {{ page.title }}
+                        </a>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                </div>
+              {% endif %}
 
-            {% render 'predictive-search-resource-carousel',
-              title: resource_title,
-              resource_type: 'article',
-              resources: predictive_search.resources.articles
-            %}
-          {% endif %}
-        {%- elsif predictive_search.resources.queries.size == 0 -%}
-          <p class="predictive-search-results__no-results">
-            {{ 'content.search_results_no_results' | t: terms: predictive_search.terms }}
-          </p>
-        {% endif %}
+              {% if predictive_search.resources.articles.size > 0 %}
+                <div class="threadheads-search-group">
+                  <h4 class="predictive-search-results__title">
+                    {{ 'content.search_results_resource_articles' | t }}
+                  </h4>
+                  <ul class="threadheads-collections-list list-unstyled">
+                    {%- for article in predictive_search.resources.articles -%}
+                      <li class="threadheads-collection-item" ref="resultsItems[]" on:keydown="/onSearchKeyDown">
+                        <a href="{{ article.url }}" class="threadheads-collection-link">
+                          {{ article.title }}
+                        </a>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                </div>
+              {% endif %}
+
+              {% if predictive_search.terms != blank and search_results_count > 0 %}
+                <div class="threadheads-search-view-all">
+                  <a href="{{ routes.search_url }}?q={{ predictive_search.terms | url_encode }}&options%5Bprefix%5D=last" class="threadheads-view-all-link">
+                    View all results for "{{ predictive_search.terms }}" &rarr;
+                  </a>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        {%- endif -%}
       {% else %}
         {%- liquid
           assign title = 'content.recently_viewed_products' | t

@@ -83,9 +83,11 @@
       </ul>
     </div>
   {% else %}
-    <h4 class="predictive-search-results__title">
-      {{ title }}
-    </h4>
+    {% if title != blank %}
+      <h4 class="predictive-search-results__title">
+        {{ title }}
+      </h4>
+    {% endif %}
     <ul
       class="predictive-search-results__list predictive-search-results__wrapper-products list-unstyled"
     >

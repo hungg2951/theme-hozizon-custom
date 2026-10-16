@@ -4,13 +4,13 @@
 {% endcomment %}
 
 {% liquid
-  assign container_max_width = '1440px'
+  assign container_max_width = '1600px'
   if section.settings.section_width == 'page-width'
-    assign container_max_width = 'var(--page-width, 1400px)'
+    assign container_max_width = 'min(var(--page-content-width, 1600px), 1600px)'
   elsif section.settings.section_width == 'full-width'
-    assign container_max_width = '100%'
+    assign container_max_width = '1600px'
   elsif section.settings.section_width == 'custom'
-    assign container_max_width = section.settings.custom_width | append: 'px'
+    assign container_max_width = section.settings.custom_width | default: 1600 | append: 'px'
   endif
 %}
 
@@ -285,7 +285,7 @@
   }
 
   .th-footer__container {
-    max-width: var(--th-footer-max-width, 1440px);
+    max-width: var(--th-footer-max-width, 1600px);
     margin: 0 auto;
     padding: var(--th-footer-padding-top, 64px) var(--th-footer-padding-x, 40px) var(--th-footer-padding-bottom, 48px);
     box-sizing: border-box;

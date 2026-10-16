@@ -9,6 +9,7 @@
  */
 {
   "current": {
+    "search_placeholder_display_time": 2,
     "logo_height": 26,
     "logo_height_mobile": 21,
     "page_text_color": "{{ settings.color_palette.foreground }}",

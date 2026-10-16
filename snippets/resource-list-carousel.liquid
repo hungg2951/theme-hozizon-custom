@@ -57,6 +57,7 @@
 {% stylesheet %}
   .resource-list__carousel {
     --slide-width: 60vw;
+    --peek-next-slide-size: 0px !important;
 
     width: 100%;
     position: relative;
@@ -72,39 +73,87 @@
     }
   }
 
-  @container resource-list-carousel (max-width: 749px) {
+  @container resource-list-carousel (max-width: 699px) {
     .resource-list__carousel .resource-list__slide {
       --slide-width: clamp(150px, var(--mobile-card-size, 60cqw), var(--slide-width-max));
     }
   }
 
-  @container resource-list-carousel (min-width: 750px) {
+  @container resource-list-carousel (min-width: 700px) {
     .resource-list__carousel .resource-list__slide {
       --section-slide-width: calc(
-        (100% - (var(--resource-list-column-gap) * (var(--column-count) - 1)) - var(--peek-next-slide-size)) /
-          var(--column-count)
+        (100cqw - (var(--gutter-slide-width, 0px) * 2) - (var(--resource-list-column-gap, 2px) * (var(--column-count, 4) - 1))) /
+          var(--column-count, 4)
       );
-      --fallback-slide-width: clamp(150px, var(--mobile-card-size, 60cqw), var(--slide-width-max));
-      --slide-width: var(--section-slide-width, var(--fallback-slide-width));
+      --slide-width: var(--section-slide-width);
+      width: var(--section-slide-width) !important;
+      max-width: var(--section-slide-width) !important;
+      flex: 0 0 var(--section-slide-width) !important;
+    }
+  }
+
+  @media screen and (min-width: 700px) {
+    .resource-list__carousel .resource-list__slide {
+      --section-slide-width: calc(
+        (100cqw - (var(--gutter-slide-width, 0px) * 2) - (var(--resource-list-column-gap, 2px) * (var(--column-count, 4) - 1))) /
+          var(--column-count, 4)
+      );
+      --slide-width: var(--section-slide-width);
+      width: var(--section-slide-width) !important;
+      max-width: var(--section-slide-width) !important;
+      flex: 0 0 var(--section-slide-width) !important;
     }
   }
 
   .resource-list__carousel > slideshow-container > slideshow-slides {
-    gap: var(--resource-list-column-gap);
+    gap: 2px !important;
     cursor: default;
-
-    /* Add padding to prevent hover animations from being clipped in slideshow
-     15px accommodates:
-     - Scale effect (9px on each side from 1.03 scale)
-     - Lift effect (4px upward movement)
-     - Shadow (15px spread with -5px offset)
-     Using 16px for better alignment with our spacing scale */
-    margin-block: -16px;
-    padding-block: 16px;
+    margin-block: 0 !important;
+    padding-block: 0 !important;
   }
 
   .resource-list__carousel slideshow-arrows {
-    padding-inline: var(--util-page-margin-offset);
+    padding-inline: 16px;
+    height: 100% !important;
+    top: 0 !important;
+    bottom: auto !important;
+    pointer-events: none !important;
+    align-items: center !important;
+  }
+
+  .resource-list__carousel slideshow-arrows .slideshow-control {
+    pointer-events: auto !important;
+    opacity: 1 !important;
+    width: 56px !important;
+    height: 56px !important;
+    min-width: 56px !important;
+    min-height: 56px !important;
+    max-width: 56px !important;
+    max-height: 56px !important;
+    border-radius: 50% !important;
+    background-color: #ffffff !important;
+    color: #1a1a1a !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    cursor: pointer !important;
+    transition: box-shadow 0.25s ease, border-color 0.2s ease, background-color 0.2s ease !important;
+  }
+
+  .resource-list__carousel slideshow-arrows .slideshow-control:hover {
+    color: #1a1a1a !important;
+    background-color: #ffffff !important;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12) !important;
+    border-color: rgba(0, 0, 0, 0.12) !important;
+  }
+
+  .resource-list__carousel slideshow-arrows .slideshow-control[disabled] {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
   }
 
   .resource-list__carousel .resource-list__slide {
@@ -112,23 +161,22 @@
     flex: 0 0 auto;
     scroll-snap-align: start;
     min-width: 0;
+    cursor: pointer !important;
   }
 
-  .resource-list__carousel > slideshow-container > slideshow-slides > .resource-list__slide {
-    cursor: var(--cursor);
-  }
-
-  .resource-list__carousel .product-card__content {
-    cursor: var(--cursor);
-  }
-
-  /* Card media links and nested slideshows follow the outer carousel's drag cursor. */
-  .resource-list__carousel .card-gallery > a {
-    cursor: var(--cursor);
+  .resource-list__carousel,
+  .resource-list__carousel > slideshow-container > slideshow-slides > .resource-list__slide,
+  .resource-list__carousel .product-card,
+  .resource-list__carousel .product-card__content,
+  .resource-list__carousel .card-gallery,
+  .resource-list__carousel .card-gallery > a,
+  .resource-list__carousel .card-gallery img,
+  .resource-list__carousel .product-card__link {
+    cursor: pointer !important;
   }
 
   .resource-list__carousel .product-card__content slideshow-component {
-    --cursor: inherit;
+    --cursor: pointer !important;
   }
 
   /*

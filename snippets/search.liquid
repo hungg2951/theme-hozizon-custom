@@ -11,20 +11,20 @@
 
 {% unless style == 'none' %}
   <search-button
-    class="search-action{% if display_style == 'text' %} search-action--text{% endif %}{% if class != blank %} {{ class | strip }}{% endif %}"
+    class="search-action{% if class != blank %} {{ class | strip }}{% endif %}"
   >
     <button
+      type="button"
       on:click="#search-modal/showDialog"
-      class="button-unstyled header-actions__action{% if display_style == 'text' %} header-actions__text-style{% endif %}"
+      class="button-unstyled header-search-trigger"
       aria-label="{{ 'content.search_input_label' | t }}"
       aria-haspopup="dialog"
     >
-      <span class="{% if display_style == 'icon' %}hidden{% else %}mobile:hidden{% endif %}">
-        {{ 'content.search' | t }}
-      </span>
-
-      <span class="svg-wrapper {% if display_style != 'icon' %}desktop:hidden{% endif %}">
+      <span class="svg-wrapper header-search-icon">
         {{ 'icon-search.svg' | inline_asset_content }}
+      </span>
+      <span class="header-search-text">
+        {{ 'content.search' | t | default: 'Search' }}
       </span>
     </button>
   </search-button>
@@ -32,47 +32,111 @@
 
 {% stylesheet %}
   .search-action {
-    --search-border-radius: var(--style-border-radius-inputs);
-    --search-border-width: var(--style-border-width-inputs);
+    display: inline-flex;
+    align-items: center;
+  }
 
-    display: flex;
+  .header-search-trigger {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  @media screen and (min-width: 750px) {
+    .search-action--hidden-on-menu {
+      display: none !important;
+    }
+
+    .header-search-trigger {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: flex-start !important;
+      text-align: left !important;
+      gap: 8px !important;
+      width: 260px !important;
+      height: 34px !important;
+      padding: 0 12px !important;
+      background-color: #ffffff !important;
+      border: 1px solid #e5e5e5 !important;
+      border-radius: 6px !important;
+      color: #71717a !important;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+      box-sizing: border-box !important;
+      cursor: pointer !important;
+    }
+
+    .header-search-trigger:hover {
+      border-color: #a1a1aa !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+    }
+
+    .header-search-trigger .header-search-icon,
+    .header-search-trigger .svg-wrapper {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 15px !important;
+      height: 15px !important;
+      flex-shrink: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    .header-search-trigger .header-search-icon svg {
+      width: 15px !important;
+      height: 15px !important;
+      color: #111111 !important;
+      stroke: #111111 !important;
+    }
+
+    .header-search-trigger .header-search-text {
+      display: inline-block !important;
+      font-size: 13px !important;
+      font-weight: 500 !important;
+      color: #71717a !important;
+      line-height: 1 !important;
+      text-align: left !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      flex: 1 1 auto !important;
+    }
   }
 
   @media screen and (max-width: 749px) {
     .search-action--hidden-on-drawer {
-      display: none;
-    }
-  }
-
-  @media screen and (min-width: 750px) {
-    [data-menu-style='drawer'] .search-action--hidden-on-drawer {
-      display: none;
+      display: none !important;
     }
 
-    [data-menu-style='menu'] .search-action--hidden-on-menu {
-      display: none;
-    }
-  }
-
-  [data-menu-style='menu'] .header__column--left .search-action {
-    @media screen and (min-width: 750px) {
-      margin-inline: calc(var(--padding-lg) * -1);
-    }
-  }
-
-  .header__column--right .search-action {
-    @media screen and (min-width: 750px) {
-      margin-inline: calc(var(--gap-md) * -1) calc(var(--gap-xs) * -1);
-    }
-  }
-
-  @media screen and (min-width: 750px) {
-    .header__column--right .search-action--text {
-      margin-inline: 0;
+    .header-search-trigger {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 36px !important;
+      height: 36px !important;
+      padding: 0 !important;
+      background: transparent !important;
+      border: none !important;
     }
 
-    [data-menu-style='menu'] .header__column--left .search-action--text {
-      margin-inline: 0;
+    .header-search-trigger .header-search-text {
+      display: none !important;
+    }
+
+    .header-search-trigger .header-search-icon,
+    .header-search-trigger .svg-wrapper {
+      width: 20px !important;
+      height: 20px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+
+    .header-search-trigger .header-search-icon svg {
+      width: 20px !important;
+      height: 20px !important;
+      color: #444444 !important;
+      stroke: #444444 !important;
     }
   }
 {% endstylesheet %}

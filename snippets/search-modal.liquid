@@ -59,6 +59,12 @@
           class="predictive-search-form__header"
         >
           <div class="predictive-search-form__header-inner">
+            <span class="desktop-search-modal-icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </span>
             <label
               for="{{ 'cmdk-input' | default: 'Search' }}"
               class="visually-hidden"
@@ -77,6 +83,7 @@
               aria-haspopup="listbox"
               aria-autocomplete="list"
               autocomplete="off"
+              autofocus
               placeholder="{{ 'content.search_input_placeholder' | t }}"
               ref="searchInput"
               on:input="/search"
@@ -87,30 +94,90 @@
               type="hidden"
               value="last"
             >
-            <span class="svg-wrapper predictive-search__icon">
-              {{ 'icon-search.svg' | inline_asset_content }}
-            </span>
             <button
               type="button"
               class="button-unstyled predictive-search__reset-button"
               ref="resetButton"
               hidden
               on:click="/resetSearch"
+              aria-label="{{ 'actions.clear' | t }}"
             >
-              {{ 'actions.clear' | t }}
+              <span class="predictive-search__reset-button-text">{{ 'actions.clear' | t }}</span>
+            </button>
+            <button
+              type="button"
+              class="button button-unstyled predictive-search__close-modal-button"
+              aria-label="{{ 'accessibility.close_dialog' | t }}"
+              on:click="dialog-component/closeDialog"
+              ref="closeModalButton"
+            >
+              <span class="svg-wrapper">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <path d="M1 1L13 13M13 1L1 13" />
+                </svg>
+              </span>
             </button>
           </div>
-          <button
-            type="button"
-            class="button predictive-search__close-modal-button"
-            aria-label="{{ 'accessibility.close_dialog' | t }}"
-            on:click="dialog-component/closeDialog"
-            ref="closeModalButton"
-          >
-            <span class="svg-wrapper">
-              {{ 'icon-close.svg' | inline_asset_content }}
-            </span>
-          </button>
+        </div>
+
+        {% comment %} Desktop Initial Content (Popular Now + Trending matching Threadheads image) {% endcomment %}
+        <div class="desktop-search-initial-content" ref="desktopInitialContent">
+          <div class="desktop-search-popular">
+            <span class="desktop-search-section-label">POPULAR NOW</span>
+            <div class="desktop-search-popular__grid">
+              {% liquid
+                assign popular_collection = settings.empty_state_collection | default: collections['all']
+                if popular_collection == blank or popular_collection.products_count == 0
+                  assign popular_collection = collections.first
+                endif
+                assign count = 0
+              %}
+              {% if popular_collection and popular_collection.products_count > 0 %}
+                {% for product in popular_collection.products limit: 4 %}
+                  {% assign count = count | plus: 1 %}
+                  <a href="{{ product.url }}" class="desktop-search-popular__card">
+                    <div class="desktop-search-popular__image-wrap">
+                      {% if product.featured_media %}
+                        <img
+                          src="{{ product.featured_media | image_url: width: 300, height: 300, crop: 'center' }}"
+                          alt="{{ product.featured_media.alt | default: product.title | escape }}"
+                          width="300"
+                          height="300"
+                          loading="lazy"
+                        >
+                      {% else %}
+                        {{ 'product-apparel-1' | placeholder_svg_tag: 'desktop-search-popular__placeholder' }}
+                      {% endif %}
+                    </div>
+                    <span class="desktop-search-popular__title">{{ product.title }}</span>
+                  </a>
+                {% endfor %}
+              {% endif %}
+              {% if count < 4 %}
+                {% assign fallback_titles = 'Custom Bootleg Tee,Oversized Tee 4 Pack: Black Charcoal Natural...,Undiagnosed T-Shirt,Oversized Tee' | split: ',' %}
+                {% for fallback_title in fallback_titles offset: count limit: 4 %}
+                  <a href="{{ routes.all_products_collection_url }}" class="desktop-search-popular__card">
+                    <div class="desktop-search-popular__image-wrap">
+                      {{ 'product-apparel-1' | placeholder_svg_tag: 'desktop-search-popular__placeholder' }}
+                    </div>
+                    <span class="desktop-search-popular__title">{{ fallback_title }}</span>
+                  </a>
+                {% endfor %}
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="desktop-search-trending">
+            <span class="desktop-search-section-label">TRENDING</span>
+            <ul class="desktop-search-trending__list list-unstyled">
+              <li><a href="{{ routes.search_url }}?q=Looney+Tunes&options%5Bprefix%5D=last">Looney Tunes</a></li>
+              <li><a href="{{ routes.search_url }}?q=oversized+tees&options%5Bprefix%5D=last">oversized tees</a></li>
+              <li><a href="{{ routes.search_url }}?q=custom+t-shirt+printing&options%5Bprefix%5D=last">custom t-shirt printing</a></li>
+              <li><a href="{{ routes.search_url }}?q=blank+tees&options%5Bprefix%5D=last">blank tees</a></li>
+              <li><a href="{{ routes.search_url }}?q=Sesame+Street&options%5Bprefix%5D=last">Sesame Street</a></li>
+              <li><a href="{{ routes.search_url }}?q=Harry+Potter&options%5Bprefix%5D=last">Harry Potter</a></li>
+            </ul>
+          </div>
         </div>
 
         <div class="predictive-search-form__content-wrapper">
@@ -120,8 +187,8 @@
             on:click="/handleModalClick"
           >
             {% render 'predictive-search-empty-state',
-              load_empty_state: true,
-              shadow_opacity: 0.1,
+              load_empty_state: false,
+              shadow_opacity: 0,
               products_test_id: 'products-list-default--modal'
             %}
           </div>
@@ -140,6 +207,153 @@
   </dialog>
 </dialog-component>
 
+{% liquid
+  assign raw_phrases = settings.search_placeholder_phrases | default: 'Search Threadheads..., Search for oversized tees..., Search for graphic tees..., Search for hoodies...'
+  assign display_seconds = settings.search_placeholder_display_time | default: 2.0
+%}
+
+<script>
+  (function initSearchTypewriter() {
+    function setup() {
+      var input = document.getElementById('cmdk-input');
+      if (!input) return;
+
+      var raw = {{ raw_phrases | json }};
+      var phrases = (raw || '')
+        .split(/[\r\n,]+/)
+        .map(function(p) { return p.trim(); })
+        .filter(function(p) { return p.length > 0; });
+
+      if (phrases.length === 0) {
+        phrases = ['Search Threadheads...', 'Search for oversized tees...', 'Search for graphic tees...', 'Search for hoodies...'];
+      }
+
+      var displayTime = Math.round(({{ display_seconds }} || 2.0) * 1000);
+      var phraseIdx = 0;
+      var charIdx = 0;
+      var isDeleting = false;
+      var timerId = null;
+      var isPaused = false;
+
+      var outsideTexts = document.querySelectorAll('.header-search-text');
+      for (var i = 0; i < outsideTexts.length; i++) {
+        outsideTexts[i].textContent = 'Search';
+      }
+
+      function updateDisplay(text) {
+        input.setAttribute('placeholder', text);
+      }
+
+      function tick() {
+        if (isPaused || (input.value && input.value.trim().length > 0)) {
+          return;
+        }
+
+        var current = phrases[phraseIdx];
+        if (!isDeleting) {
+          charIdx++;
+          updateDisplay(current.substring(0, charIdx));
+
+          if (charIdx >= current.length) {
+            isDeleting = true;
+            timerId = setTimeout(tick, displayTime);
+            return;
+          }
+          timerId = setTimeout(tick, 60);
+        } else {
+          charIdx--;
+          updateDisplay(current.substring(0, charIdx));
+
+          if (charIdx <= 0) {
+            isDeleting = false;
+            phraseIdx = (phraseIdx + 1) % phrases.length;
+            timerId = setTimeout(tick, 320);
+            return;
+          }
+          timerId = setTimeout(tick, 35);
+        }
+      }
+
+      function resume() {
+        if (!input.value || input.value.trim().length === 0) {
+          isPaused = false;
+          if (timerId) clearTimeout(timerId);
+          tick();
+        }
+      }
+
+      function pause() {
+        isPaused = true;
+        if (timerId) clearTimeout(timerId);
+      }
+
+      // DO NOT pause on focus: placeholder continues running normally when focused
+      input.addEventListener('focus', function() {
+        if (!input.value || input.value.trim().length === 0) {
+          resume();
+        }
+      });
+
+      input.addEventListener('blur', function() {
+        if (!input.value || input.value.trim().length === 0) {
+          resume();
+        }
+      });
+
+      // ONLY stop placeholder when text is entered
+      input.addEventListener('input', function() {
+        if (input.value && input.value.trim().length > 0) {
+          pause();
+        } else {
+          resume();
+        }
+      });
+
+      var form = input.closest('form');
+      if (form) {
+        form.addEventListener('reset', function() {
+          setTimeout(resume, 50);
+        });
+        var resetBtn = form.querySelector('.predictive-search__reset-button');
+        if (resetBtn) {
+          resetBtn.addEventListener('click', function() {
+            setTimeout(resume, 50);
+          });
+        }
+      }
+
+      function focusSearchInput() {
+        setTimeout(function() {
+          input.focus();
+          resume();
+        }, 50);
+      }
+
+      var dialog = input.closest('dialog-component') || document.getElementById('search-modal');
+      if (dialog) {
+        dialog.addEventListener('dialog:open', function() {
+          focusSearchInput();
+        });
+      }
+
+      // Listen for search button triggers to ensure auto-focus on open
+      document.querySelectorAll('[on\\:click*="search-modal/showDialog"], [on\\:click*="#search-modal/showDialog"]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          focusSearchInput();
+        });
+      });
+
+      tick();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setup);
+    } else {
+      setup();
+    }
+  })();
+</script>
+
 {% stylesheet %}
   /* Search modal style */
   .search-modal {
@@ -148,40 +362,45 @@
   }
 
   .search-modal__content {
-    /* Approx set the top so when the content is at max height, the modal is centered */
-    --modal-top-margin: calc(50dvh - var(--modal-max-height) / 2 - 2rem);
-    --modal-width: 66dvw;
-
     padding: 0;
-    border: var(--style-border-popover);
+    border: none;
+    height: auto;
+    min-height: 0;
+  }
 
-    @media screen and (min-width: 750px) {
-      width: var(--modal-width);
-      margin-block-start: var(--modal-top-margin);
-      overflow: hidden;
+  @keyframes search-modal-slide-down {
+    0% {
+      transform: translateY(-28px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
     }
   }
 
-  /* Hide the default dialog backdrop on small screens */
-  @media screen and (max-width: 749px) {
-    .search-modal__content::backdrop {
-      display: none;
+  @keyframes search-modal-slide-up {
+    0% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-28px);
+      opacity: 0;
     }
   }
 
   .dialog-modal[open].search-modal__content {
-    transform-origin: bottom center;
-    animation: search-element-slide-in-bottom 300ms var(--ease-out-quad) forwards;
-    border-radius: var(--search-border-radius);
-    box-shadow: var(--shadow-popover);
-
-    @media screen and (max-width: 749px) {
-      border-radius: 0;
-    }
+    transform-origin: top center;
+    animation: search-modal-slide-down 250ms cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+    border-radius: 16px;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.28);
+    height: auto;
+    min-height: 0;
   }
 
   .dialog-modal.search-modal__content.dialog-closing {
-    animation: search-element-slide-out-bottom 200ms var(--ease-out-quad) forwards;
+    animation: search-modal-slide-up 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
   }
 
   .search-modal__content[open] {
@@ -192,35 +411,7 @@
     position: relative;
   }
 
-  .dialog-modal
-    .predictive-search-form__header:has(
-      .predictive-search__reset-button:not(.predictive-search__reset-button[hidden])
-    )::before {
-    content: '';
-    position: absolute;
-    inset-inline-end: calc(var(--padding-sm) + var(--minimum-touch-target));
-    top: 0;
-    bottom: 0;
-    width: var(--border-width-sm);
-    background-color: var(--color-border);
-  }
 
-  .dialog-modal
-    .predictive-search-form__header:has(.predictive-search__reset-button:not(.predictive-search__reset-button[hidden]))
-    > .predictive-search__close-modal-button {
-    &::before {
-      content: none;
-    }
-  }
-
-  @media screen and (min-width: 750px) {
-    .dialog-modal
-      .predictive-search-form__header:has(
-        .predictive-search__reset-button:not(.predictive-search__reset-button[hidden])
-      )::before {
-      inset-inline-end: calc(var(--padding-2xl) * 2);
-    }
-  }
 
   predictive-search-component {
     --resource-card-corner-radius: var(--product-corner-radius);
@@ -308,27 +499,17 @@
   }
 
   .predictive-search-form__header-inner {
-    background: var(--color-background);
-    border: var(--search-border-width) solid var(--color-border);
+    background: transparent;
+    border: none !important;
+    border-bottom: 2px solid #000000 !important;
     color: var(--color-foreground);
-    border-radius: var(--style-border-radius-popover);
+    border-radius: 0 !important;
     display: flex;
     align-items: center;
     justify-content: space-between;
     width: 100%;
-
-    @media screen and (max-width: 749px) {
-      border-radius: var(--style-border-radius-inputs);
-      border: none;
-    }
-  }
-
-  .predictive-search-form__header-inner:focus-within {
-    outline-offset: var(--focus-outline-offset);
-
-    @media screen and (min-width: 750px) {
-      outline: var(--focus-outline-width) solid var(--color-foreground);
-    }
+    padding-bottom: 6px;
+    box-sizing: border-box;
   }
 
   .predictive-search-form__header {
@@ -338,12 +519,17 @@
     z-index: var(--layer-heightened);
     width: 100%;
     align-items: center;
-    background-color: var(--color-input-background);
-    border: var(--search-border-width) solid var(--color-border);
-    border-radius: var(--style-border-radius-inputs);
+    background-color: #ffffff;
+    border: none !important;
+    border-radius: 0;
+    box-sizing: border-box;
+
+    @media screen and (min-width: 750px) {
+      padding: 24px 32px 24px;
+    }
 
     @media screen and (max-width: 749px) {
-      padding: var(--padding-2xs) var(--padding-sm);
+      padding: 16px 16px 16px;
     }
   }
 
@@ -357,12 +543,13 @@
   }
 
   input.search-input {
-    border-radius: var(--style-border-radius-inputs);
-    padding-block: var(--padding-sm);
-    font-size: var(--font-size--md);
+    border-radius: 0;
+    padding-block: 6px;
+    font-size: 18px;
+    font-weight: 700;
     width: 100%;
-    color: var(--color-foreground);
-    padding-inline: calc(var(--margin-lg) + var(--icon-size-lg)) 0;
+    color: #111111;
+    padding-inline: 0;
     background: transparent;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -371,7 +558,10 @@
   }
 
   input.search-input::placeholder {
-    color: rgb(var(--color-rgb, var(--color-foreground-rgb)) / var(--opacity-muted-text));
+    color: #767676;
+    font-size: 18px;
+    font-weight: 700;
+    opacity: 1;
   }
 
   input.search-input,
@@ -465,7 +655,9 @@
   }
 
   .predictive-search__reset-button-text {
-    display: none;
+    display: inline-block;
+    font-size: 14px;
+    color: #767676;
   }
 
   .predictive-search__search-button {

@@ -105,9 +105,7 @@
     render 'header-actions', customer_account_menu: section.settings.customer_account_menu, display_style: section.settings.actions_display_style, section: section
   endcapture
 
-  if shop.customer_accounts_enabled
-    assign search_class = 'search-action--hidden-on-drawer'
-  endif
+  assign search_class = 'search-action--hidden-on-drawer'
 
   # Handle localization positioning
   if section.settings.localization_position == 'left'
@@ -512,12 +510,22 @@
     }
   }
 
-  #header-component :is(.header-menu, .dropdown-localization) {
+  #header-component .header-menu {
     display: none;
   }
 
   @media screen and (min-width: 750px) {
-    #header-component[data-menu-style='menu'] :is(.header-menu, .dropdown-localization) {
+    #header-component[data-menu-style='menu'] .header-menu {
+      display: flex;
+    }
+  }
+
+  #header-component .dropdown-localization {
+    display: none;
+  }
+
+  @media screen and (min-width: 750px) {
+    #header-component .dropdown-localization {
       display: flex;
     }
   }
@@ -906,7 +914,7 @@
       }
 
       &:not(:has(shopify-account)) .search-action {
-        grid-area: rightA;
+        grid-area: leftB;
       }
 
       .search-action {
@@ -950,7 +958,7 @@
     }
 
     &:not(:has(shopify-account)) .search-action {
-      grid-area: rightA;
+      grid-area: leftB;
     }
 
     .search-action {

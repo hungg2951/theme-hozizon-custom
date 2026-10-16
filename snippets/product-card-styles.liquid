@@ -64,4 +64,251 @@
       display: none;
     }
   }
+
+  /* Threadheads product card info container: padding: 18px 36px 0px */
+  .product-grid__card {
+    gap: 0 !important;
+  }
+
+  /* Product Title: bold, 1 line truncate, black #000000, 14px, proper spacing */
+  .product-grid__card :is([ref='productTitleLink'], .product-title) {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    text-decoration: none !important;
+    display: block !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-top: 18px !important;
+    padding-inline: 36px !important;
+    padding-bottom: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .product-grid__card :is([ref='productTitleLink'], .product-title) .text-block {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    display: block !important;
+  }
+
+  .product-grid__card :is([ref='productTitleLink'], .product-title) :is(p, h1, h2, h3, h4, h5, h6, span, div, a) {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    color: #1a1a1a !important;
+    line-height: 1.25 !important;
+    letter-spacing: -0.01em !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    white-space: normal !important;
+    display: -webkit-box !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 2 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    text-align: left !important;
+  }
+
+  .product-grid__card [ref='productTitleLink']:hover :is(p, h1, h2, h3, h4, h5, h6, span, div, a) {
+    color: #1a1a1a !important;
+  }
+
+  /* Price: Exact match with Title padding-inline, flush on left, compare-at price immediately next to sale price */
+  .product-grid__card product-price {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+    font-size: 15px !important;
+    font-weight: 400 !important;
+    color: #1a1a1a !important;
+    line-height: 1.38 !important;
+    margin-top: 4px !important;
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+    padding-inline: 36px !important;
+    padding-bottom: 0 !important;
+    box-sizing: border-box !important;
+    display: block !important;
+    width: 100% !important;
+    text-align: left !important;
+    align-items: flex-start !important;
+  }
+
+  /* Reset inner children of product-price so padding is never duplicated */
+  .product-grid__card product-price * {
+    padding-inline: 0 !important;
+    margin-inline: 0 !important;
+    text-align: left !important;
+  }
+
+  /* Price container inside product-price: inline row starting on left */
+  .product-grid__card product-price [ref='priceContainer'],
+  .product-grid__card product-price > div {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: baseline !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    text-align: left !important;
+  }
+
+  /* Price items: inline, unconstrained width, clean alignment */
+  .product-grid__card product-price :is(.price, .price-item__group, .price-item, .price-item--regular) {
+    display: inline-flex !important;
+    align-items: baseline !important;
+    width: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  .product-grid__card product-price :is(.price, .price-item, .price-item--regular, bdi) {
+    color: #1a1a1a !important;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+    font-size: 15px !important;
+    font-weight: 400 !important;
+    line-height: 1.38 !important;
+  }
+
+  /* Sale price when on discount: 15px bold #1a1a1a */
+  .product-grid__card product-price :is(.price__sale, .price-item--sale, .price-item--sale bdi) {
+    color: #1a1a1a !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    line-height: 1.38 !important;
+  }
+
+  /* Compare-at (original/discount) price: immediately beside sale price, muted grey #9ca3af with strikethrough */
+  .product-grid__card product-price :is(.compare-at-price, .compare-at-price bdi) {
+    color: #9ca3af !important;
+    text-decoration: line-through !important;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    line-height: 1.38 !important;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    display: inline-block !important;
+    width: auto !important;
+    white-space: nowrap !important;
+  }
+
+  @media screen and (max-width: 699px) {
+    .product-grid__card :is([ref='productTitleLink'], .product-title) {
+      padding-top: 12px !important;
+      padding-inline: 16px !important;
+    }
+
+    .product-grid__card product-price {
+      padding-inline: 16px !important;
+    }
+  }
+
+  /* Carousel Navigation Arrows: White circle with black chevron (matches Threadheads) */
+  .resource-list__carousel .slideshow-control--shape-circle {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+    border: 1px solid #e5e7eb !important;
+    width: 44px !important;
+    height: 44px !important;
+    opacity: 0.95 !important;
+    transition: opacity 0.2s ease, transform 0.2s ease !important;
+  }
+
+  .resource-list__carousel .slideshow-control--shape-circle:hover {
+    opacity: 1 !important;
+    transform: scale(1.05) !important;
+  }
+
+  .resource-list__carousel .slideshow-control--shape-circle:disabled,
+  .resource-list__carousel .slideshow-control[disabled] {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+    cursor: default !important;
+  }
+
+  /* Card hover cursor */
+  .product-grid__card,
+  .product-card,
+  .product-card__content,
+  .card-gallery,
+  .card-gallery a,
+  .card-gallery img,
+  .product-card__link,
+  .resource-list__slide,
+  .resource-list__slide a {
+    cursor: pointer !important;
+  }
+
+  /* Threadheads Section CTA Button matching Image 3 (a.th-featured__footer-cta) */
+  .section-resource-list__content {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    margin-top: 36px !important;
+    margin-bottom: 48px !important;
+    padding-block: 0 !important;
+  }
+
+  .section-resource-list__content :is(.button, .button-custom, a.button, a.button-custom, a) {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background-color: #1a1a1a !important;
+    color: #ffffff !important;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    line-height: 1.4 !important;
+    letter-spacing: normal !important;
+    padding: 14px 36px !important;
+    border-radius: 9999px !important;
+    border: none !important;
+    text-decoration: none !important;
+    box-shadow: none !important;
+    min-height: 52px !important;
+    box-sizing: border-box !important;
+    cursor: pointer !important;
+    transition: background-color 0.2s ease, transform 0.2s ease !important;
+  }
+
+  .section-resource-list__content :is(.button, .button-custom, a.button, a.button-custom, a):hover {
+    background-color: #333333 !important;
+    color: #ffffff !important;
+    transform: translateY(-1px) !important;
+  }
+
+  .section-resource-list__content :is(.button, .button-custom, a.button, a.button-custom, a) .button__text {
+    color: #ffffff !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    text-decoration: none !important;
+  }
+
+  /* Make sure section flush with banner */
+  .section-resource-list.section--full-width {
+    padding-block-start: 0 !important;
+  }
+
+  .resource-list__carousel .slideshow-control--shape-circle svg {
+    width: 20px !important;
+    height: 20px !important;
+    --icon-stroke-width: 2px !important;
+  }
+
 {% endstylesheet %}
+
+
+

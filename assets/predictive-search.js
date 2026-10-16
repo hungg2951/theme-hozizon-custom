@@ -52,15 +52,9 @@ class PredictiveSearchComponent extends Component {
     if (dialog) {
       document.addEventListener('keydown', this.#handleKeyboardShortcut, { signal });
       dialog.addEventListener(DialogCloseEvent.eventName, this.#handleDialogClose, { signal });
-      dialog.addEventListener(DialogOpenEvent.eventName, this.#handleDialogOpen, { signal, once: true });
+      dialog.addEventListener(DialogOpenEvent.eventName, this.#handleDialogOpen, { signal });
 
       this.addEventListener('click', this.#handleModalClick, { signal });
-    }
-
-    if (RecentlyViewed.getProducts().length > 0) {
-      requestIdleCallback(() => {
-        this.#loadEmptyState();
-      });
     }
   }
 
@@ -106,9 +100,14 @@ class PredictiveSearchComponent extends Component {
   };
 
   #handleDialogOpen = () => {
-    if (!this.#emptyStateLoaded && RecentlyViewed.getProducts().length > 0) {
-      this.#loadEmptyState();
+    const initialContent = this.querySelector('.desktop-search-initial-content');
+    if (initialContent && !this.refs.searchInput?.value?.trim()) {
+      initialContent.removeAttribute('hidden');
     }
+    // Keep initial search modal clean and empty matching Image 2, and auto-focus search input
+    requestAnimationFrame(() => {
+      this.refs.searchInput?.focus();
+    });
   };
 
   #loadEmptyState() {
@@ -290,6 +289,15 @@ class PredictiveSearchComponent extends Component {
     const searchTerm = this.refs.searchInput.value.trim();
     this.#currentIndex = -1;
 
+    const initialContent = this.querySelector('.desktop-search-initial-content');
+    if (initialContent) {
+      if (searchTerm.length > 0) {
+        initialContent.setAttribute('hidden', '');
+      } else {
+        initialContent.removeAttribute('hidden');
+      }
+    }
+
     if (!searchTerm.length) {
       this.#resetSearch();
       return;
@@ -408,6 +416,11 @@ class PredictiveSearchComponent extends Component {
     this.#currentIndex = -1;
     searchInput.value = '';
     this.#hideResetButton();
+
+    const initialContent = this.querySelector('.desktop-search-initial-content');
+    if (initialContent) {
+      initialContent.removeAttribute('hidden');
+    }
 
     const abortController = this.#createAbortController();
     const url = new URL(window.location.href);

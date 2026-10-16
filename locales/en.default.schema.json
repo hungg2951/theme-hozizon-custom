@@ -1200,7 +1200,11 @@
     "top_row_background": "Top row background",
     "top_row_text": "Top row text",
     "bottom_row_background": "Bottom row background",
-    "bottom_row_text": "Bottom row text"
+    "bottom_row_text": "Bottom row text",
+    "search_placeholder_header": "Search placeholder typewriter",
+    "search_placeholder_phrases": "Placeholder phrases",
+    "search_placeholder_phrases_info": "Enter search phrases separated by new lines or commas. The placeholder will animate each phrase in and out.",
+    "search_placeholder_display_time": "Phrase display duration"
   },
   "text_defaults": {
     "accordion_heading": "Accordion heading",

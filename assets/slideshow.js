@@ -429,8 +429,9 @@ export class Slideshow extends Component {
       controls?.forEach((el, i) => el.setAttribute('aria-selected', `${i === value}`));
     }
 
-    if (previous) previous.disabled = Boolean(!this.infinite && value === 0);
-    if (next) next.disabled = Boolean(!this.infinite && slides && this.nextIndex >= slides.length);
+    const isStepOne = this.getAttribute('step') === '1' || this.classList.contains('resource-list__carousel');
+    if (previous) previous.disabled = Boolean(!this.infinite && (value <= 0 || this.atStart));
+    if (next) next.disabled = Boolean(!this.infinite && slides && (isStepOne ? this.atEnd : this.nextIndex >= slides.length));
   }
 
   get infinite() {
@@ -443,14 +444,16 @@ export class Slideshow extends Component {
 
   get previousIndex() {
     const { current, visibleSlides } = this;
-    const modifier = visibleSlides.length > 1 ? visibleSlides.length : 1;
+    const isStepOne = this.getAttribute('step') === '1' || this.classList.contains('resource-list__carousel');
+    const modifier = isStepOne ? 1 : visibleSlides.length > 1 ? visibleSlides.length : 1;
 
     return current - modifier;
   }
 
   get nextIndex() {
     const { current, visibleSlides } = this;
-    const modifier = visibleSlides.length > 1 ? visibleSlides.length : 1;
+    const isStepOne = this.getAttribute('step') === '1' || this.classList.contains('resource-list__carousel');
+    const modifier = isStepOne ? 1 : visibleSlides.length > 1 ? visibleSlides.length : 1;
 
     return current + modifier;
   }
@@ -462,9 +465,16 @@ export class Slideshow extends Component {
   }
 
   get atEnd() {
-    const { current, slides } = this;
+    const { current, slides, visibleSlides } = this;
 
-    return slides?.length ? current === slides.length - 1 : false;
+    if (!slides?.length) return false;
+
+    const lastSlide = slides[slides.length - 1];
+    if (visibleSlides?.length && lastSlide && visibleSlides.includes(lastSlide)) {
+      return true;
+    }
+
+    return current >= slides.length - 1;
   }
 
   /**
@@ -941,6 +951,11 @@ export class Slideshow extends Component {
         const isVisible = visibleSlides.includes(slide);
         slide.setAttribute('aria-hidden', `${!isVisible}`);
       });
+
+      const { previous, next } = this.refs;
+      const isStepOne = this.getAttribute('step') === '1' || this.classList.contains('resource-list__carousel');
+      if (previous) previous.disabled = Boolean(!this.infinite && (this.current <= 0 || this.atStart));
+      if (next) next.disabled = Boolean(!this.infinite && slides && (isStepOne ? this.atEnd : this.nextIndex >= slides.length));
     });
 
     return visibleSlides.length;

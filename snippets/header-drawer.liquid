@@ -68,9 +68,6 @@
       <span class="svg-wrapper header-drawer-icon header-drawer-icon--open">
         {{- 'icon-menu.svg' | inline_asset_content -}}
       </span>
-      <span class="svg-wrapper header-drawer-icon header-drawer-icon--close">
-        {{- 'icon-close-menu.svg' | inline_asset_content -}}
-      </span>
     </summary>
     <div
       ref="menuDrawer"
@@ -81,16 +78,90 @@
         {% endif %}
       "
     >
-      <button
-        class="button close-button menu-drawer__close-button focus-inset"
-        type="button"
-        aria-label="{{ 'actions.close' | t }}"
-        on:click="/close"
+      <div class="menu-modal__top-bar">
+        <button
+          class="button close-button menu-drawer__close-button focus-inset"
+          type="button"
+          aria-label="{{ 'actions.close' | t }}"
+          on:click="/close"
+        >
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round">
+            <path d="M1.5 1.5L10.5 10.5M1.5 10.5L10.5 1.5" />
+          </svg>
+        </button>
+      </div>
+
+      <div
+        class="menu-modal__search-form"
+        role="button"
+        tabindex="0"
+        aria-label="{{ 'content.search_input_label' | t }}"
+        style="cursor: pointer;"
+        onclick="
+          var drawer = this.closest('header-drawer');
+          if (drawer && drawer.close) { drawer.close(); }
+          var details = this.closest('details');
+          if (details) { details.removeAttribute('open'); details.classList.remove('menu-open'); }
+          var sm = document.getElementById('search-modal');
+          if (sm && sm.showDialog) {
+            sm.showDialog();
+          } else {
+            var btn = document.querySelector('.search-action button');
+            if (btn) btn.click();
+          }
+          setTimeout(function() {
+            var inp = document.getElementById('cmdk-input') || document.querySelector('.search-input');
+            if (inp) inp.focus();
+          }, 120);
+        "
+        onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }"
       >
-        <span class="svg-wrapper header-drawer-icon header-drawer-icon--close">
-          {{- 'icon-close-menu.svg' | inline_asset_content -}}
-        </span>
-      </button>
+        <div class="menu-modal__search-input-wrapper">
+          <svg class="menu-modal__search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+          <input
+            type="text"
+            id="menu-modal-search-input"
+            class="menu-modal__search-input"
+            placeholder="custom t-shirt printing"
+            autocomplete="off"
+            readonly
+            tabindex="-1"
+            aria-hidden="true"
+            style="pointer-events: none; cursor: pointer; background: transparent !important; background-color: transparent !important; border: none !important; box-shadow: none !important;"
+          >
+        </div>
+      </div>
+
+      <div class="menu-modal__promo-grid">
+        <a href="{{ routes.all_products_collection_url }}" class="menu-modal__promo-card">
+          <div class="menu-modal__promo-media">
+            <img
+              src="//threadheads.com/cdn/shop/files/White-Close-Up-OV_6807702a-53c3-4c90-b356-1b2aeb21dd4c.jpg?v=1789961821&width=600"
+              alt="New Arrivals"
+              class="menu-modal__promo-img"
+              loading="lazy"
+              width="300"
+              height="300"
+            >
+          </div>
+          <span class="menu-modal__promo-label">New Arrivals</span>
+        </a>
+        <a href="{{ routes.all_products_collection_url }}" class="menu-modal__promo-card">
+          <div class="menu-modal__promo-media">
+            <img
+              src="//threadheads.com/cdn/shop/files/TH_Acland_00056_3.png?v=1791326907&width=600"
+              alt="Licensed Collabs"
+              class="menu-modal__promo-img"
+              loading="lazy"
+              width="300"
+              height="300"
+            >
+          </div>
+          <span class="menu-modal__promo-label">Licensed Collabs</span>
+        </a>
+      </div>
       <nav
         class="menu-drawer__navigation"
         style="
@@ -132,11 +203,11 @@
                     >
                       <summary
                         id="HeaderDrawer-{{ link.handle }}"
-                        class="menu-drawer__menu-item menu-drawer__menu-item--mainlist menu-drawer__animated-element"
+                        class="menu-drawer__menu-item menu-drawer__menu-item--mainlist menu-drawer__animated-element{% if link.title contains 'Sale' or link.title contains 'sale' %} menu-drawer__link--sale{% endif %}"
                       >
                         <span class="menu-drawer__menu-item-text wrap-text">{{ link.title | escape }}</span>
-                        <span class="svg-wrapper icon-plus">
-                          {{- 'icon-plus.svg' | inline_asset_content -}}
+                        <span class="svg-wrapper icon-caret menu-drawer__chevron-badge">
+                          {{- 'icon-caret.svg' | inline_asset_content -}}
                         </span>
                       </summary>
                       {% liquid
@@ -247,7 +318,7 @@
                   <a
                     id="HeaderDrawer-{{ link.handle }}"
                     href="{{ link.url }}"
-                    class="menu-drawer__menu-item menu-drawer__menu-item--mainlist menu-drawer__animated-element"
+                    class="menu-drawer__menu-item menu-drawer__menu-item--mainlist menu-drawer__animated-element{% if link.title contains 'Sale' or link.title contains 'sale' %} menu-drawer__link--sale{% endif %}"
                     {% if link.current %}
                       aria-current="page"
                     {% endif %}
@@ -278,11 +349,11 @@
                   >
                     <summary
                       id="HeaderDrawer-{{ link.handle }}"
-                      class="menu-drawer__menu-item menu-drawer__menu-item--mainlist menu-drawer__animated-element{% if link.child_active %} menu-drawer__menu-item--active{% endif %}"
+                      class="menu-drawer__menu-item menu-drawer__menu-item--mainlist menu-drawer__animated-element{% if link.child_active %} menu-drawer__menu-item--active{% endif %}{% if link.title contains 'Sale' or link.title contains 'sale' %} menu-drawer__link--sale{% endif %}"
                       on:click="header-drawer/open/submenu"
                     >
                       <span class="menu-drawer__menu-item-text wrap-text">{{ link.title | escape }}</span>
-                      <span class="svg-wrapper icon-caret icon-caret--forward">
+                      <span class="svg-wrapper icon-caret menu-drawer__chevron-badge">
                         {{- 'icon-caret.svg' | inline_asset_content -}}
                       </span>
                     </summary>
@@ -392,13 +463,13 @@
                                     >
                                       <summary
                                         id="HeaderDrawer-{{ link.handle }}-{{ childlink.handle }}"
-                                        class="menu-drawer__menu-item menu-drawer__menu-item--parent"
+                                        class="menu-drawer__menu-item menu-drawer__menu-item--parent{% if childlink.title contains 'Sale' or childlink.title contains 'sale' %} menu-drawer__link--sale{% endif %}"
                                       >
                                         <span class="menu-drawer__menu-item-text wrap-text">
                                           {{- childlink.title | escape -}}
                                         </span>
-                                        <span class="svg-wrapper icon-plus">
-                                          {{- 'icon-plus.svg' | inline_asset_content -}}
+                                        <span class="svg-wrapper icon-caret menu-drawer__chevron-badge">
+                                          {{- 'icon-caret.svg' | inline_asset_content -}}
                                         </span>
                                       </summary>
                                       {% liquid
@@ -576,7 +647,7 @@
                   <a
                     id="HeaderDrawer-{{ link.handle }}"
                     href="{{ link.url }}"
-                    class="menu-drawer__menu-item menu-drawer__menu-item--mainlist menu-drawer__animated-element"
+                    class="menu-drawer__menu-item menu-drawer__menu-item--mainlist menu-drawer__animated-element{% if link.title contains 'Sale' or link.title contains 'sale' %} menu-drawer__link--sale{% endif %}"
                     {% if link.current %}
                       aria-current="page"
                     {% endif %}
@@ -589,6 +660,22 @@
           {% endif %}
         </ul>
       </nav>
+
+      <div class="menu-modal__footer">
+        <div class="menu-modal__footer-left">
+          <span class="menu-modal__currency-badge">
+            <svg class="menu-modal__flag" width="20" height="15" viewBox="0 0 20 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="20" height="15" fill="#B22234"/>
+              <path d="M0 2.308h20v1.154H0zm0 2.308h20v1.154H0zm0 2.308h20v1.154H0zm0 2.308h20v1.154H0zm0 2.308h20v1.154H0z" fill="#fff"/>
+              <rect width="8" height="8.077" fill="#3C3B6E"/>
+            </svg>
+            <span class="menu-modal__currency-text">{{ localization.country.currency.iso_code | default: 'USD' }} $</span>
+          </span>
+        </div>
+        <div class="menu-modal__footer-right">
+          <a href="{{ routes.account_url }}" class="menu-modal__account-link">Account</a>
+        </div>
+      </div>
       <div
         class="menu-drawer__utility-links menu-drawer__animated-element"
         style="--menu-drawer-animation-index: {{ linklist.links.size }};"
@@ -808,148 +895,436 @@
 
   .menu-drawer-container .header__icon--summary {
     color: var(--color-foreground);
-    display: flex;
+    display: inline-flex;
     justify-content: center;
     align-items: center;
-    padding: var(--padding-lg);
+    gap: 8px;
+    padding: var(--padding-sm) var(--padding-md);
+    cursor: pointer;
+  }
+
+  .header__menu-text {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    line-height: 1;
+    color: var(--color-foreground);
   }
 
   .header__icon--summary .header-drawer-icon {
-    margin: auto;
-    width: var(--icon-size-xs);
-    height: var(--icon-size-xs);
+    margin: 0;
+    width: auto !important;
+    height: auto !important;
   }
 
-  .menu-drawer__featured-content {
-    z-index: var(--layer-base);
-    container-type: inline-size;
+  .header__icon--menu .header-drawer-icon--close {
+    display: none !important;
   }
 
-  .menu-drawer__featured-content--childlist {
-    z-index: var(--layer-flat);
+  .header__icon--menu .header-drawer-icon--open {
+    display: flex !important;
   }
 
-  .menu-drawer__featured-content-list {
-    display: flex;
-    gap: 1em;
-    overflow-x: auto;
-    padding-block-end: var(--padding-lg);
-  }
-
-  .menu-drawer__featured-content-list-item {
-    flex: 0 0 auto;
-  }
-
-  .menu-drawer__featured-content-list-item--product {
-    width: 35cqi;
-  }
-
-  .menu-drawer__featured-content-list-item--collection img.resource-card__image {
-    width: 80cqi;
-  }
-
-  .menu-drawer__featured-content-list-item:first-child {
-    margin-inline-start: var(--margin-xl);
-  }
-
-  .menu-drawer__featured-content-list-item:last-child {
-    margin-inline-end: var(--margin-xl);
-  }
-
-  .menu-drawer__navigation {
-    padding: 0;
-
-    @media screen and (min-width: 750px) {
-      margin-top: var(--drawer-header-desktop-top);
-    }
-  }
-
-  details:not(.menu-open) .header__icon--menu .header-drawer-icon--close {
-    display: none;
-  }
-
-  details.menu-open .header__icon--menu .header-drawer-icon--close {
-    @media screen and (min-width: 750px) {
-      display: none;
-    }
-  }
-
-  details.menu-open .header__icon--menu .header-drawer-icon--open {
-    display: none;
-
-    @media screen and (min-width: 750px) {
-      display: flex;
-    }
-  }
+  /* ==========================================================================
+     Threadheads Menu Modal Transformation
+     ========================================================================== */
 
   .menu-drawer {
-    position: fixed;
-    transform: translateX(-100%);
-    visibility: hidden;
-    height: var(--drawer-height);
-    width: var(--drawer-width);
-    max-width: var(--drawer-max-width);
-    z-index: var(--layer-menu-drawer);
-    inset-inline-start: 0;
-    top: 0;
-
-    /* Inline-start-anchored drawer spans the full physical viewport (viewport-fit=cover); keep its
-       content clear of the status bar, side notch, and home indicator. Subtract the
-       designed menu gutter so link text aligns with the page / hamburger, not inset twice. */
-    padding-block: var(--safe-area-inset-top) var(--safe-area-inset-bottom);
-    padding-inline: max(0px, calc(var(--safe-area-inset-left) - var(--drawer-padding))) 0;
-    background-color: var(--color-background);
-    overflow: auto;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--color-background, #ffffff);
+    color: var(--color-foreground, #18181b);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25);
+    z-index: var(--layer-menu-drawer, 25);
     display: flex;
-    border-inline-end: var(--style-border-drawer);
     flex-direction: column;
-
-    @media screen and (min-width: 750px) {
-      width: 25rem;
-    }
+    box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 
-  /* The drawer enters from the inline-start edge: the slide transforms and the
-     physical safe-area notch flip in RTL */
-  [dir='rtl'] .menu-drawer {
-    transform: translateX(100%);
-    padding-inline-start: max(0px, calc(var(--safe-area-inset-right) - var(--drawer-padding)));
+  .menu-drawer::-webkit-scrollbar {
+    width: 4px;
   }
 
-  /* When opening a submenu we don't want the first-level menu to be scrollable, so we reset the overflow  */
-  .menu-drawer.menu-drawer--has-submenu-opened {
-    overflow: initial;
+  .menu-drawer::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
   }
 
   .menu-drawer__backdrop {
     position: fixed;
     top: 0;
-    inset-inline-start: 0;
+    left: 0;
     width: 100vw;
     height: 100dvh;
-    backdrop-filter: brightness(0.75);
-    z-index: var(--layer-overlay);
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    z-index: calc(var(--layer-menu-drawer, 25) - 1);
     opacity: 0;
-    transition: opacity var(--drawer-animation-speed) ease;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
 
-    .menu-open & {
+  .menu-open > .menu-drawer__backdrop {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Desktop Viewport (< 1500px, e.g. >= 750px): Floating modal close to screen edge */
+  @media screen and (min-width: 750px) {
+    .menu-drawer {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      bottom: 10px;
+      right: auto;
+      inset-inline-start: 10px;
+      inset-inline-end: auto;
+      width: min(calc(100vw - 20px), 430px);
+      max-width: 430px;
+      height: calc(100dvh - 20px);
+      max-height: calc(100dvh - 20px);
+      border-radius: 8px !important;
+      padding: 24px !important;
+      transform: translateX(-30px);
+      opacity: 0;
+      visibility: hidden;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                  opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                  visibility 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    [dir='rtl'] .menu-drawer {
+      left: auto;
+      right: 10px;
+      inset-inline-start: auto;
+      inset-inline-end: 10px;
+      transform: translateX(30px);
+    }
+
+    .menu-open > .menu-drawer {
+      transform: translateX(0);
       opacity: 1;
+      visibility: visible;
     }
   }
 
-  .menu-drawer,
-  details[open] > .menu-drawer__submenu {
-    transition: transform var(--drawer-animation-speed) ease, visibility var(--drawer-animation-speed) ease,
-      opacity var(--drawer-animation-speed) ease;
+  /* Mobile Viewport (< 750px): Floating modal close to screen edges */
+  @media screen and (max-width: 749px) {
+    .menu-drawer {
+      position: fixed;
+      inset: 8px;
+      margin: auto;
+      top: 8px;
+      bottom: 8px;
+      left: 8px;
+      right: 8px;
+      width: calc(100vw - 16px);
+      max-width: 440px;
+      height: calc(100dvh - 16px);
+      max-height: calc(100dvh - 16px);
+      border-radius: 8px !important;
+      padding: 24px !important;
+      z-index: 1001 !important;
+      transform: scale(0.96);
+      opacity: 0;
+      visibility: hidden;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                  opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                  visibility 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .menu-drawer__backdrop {
+      z-index: 1000 !important;
+    }
+
+    .menu-open > .menu-drawer {
+      transform: scale(1);
+      opacity: 1;
+      visibility: visible;
+    }
   }
 
-  .menu-open > .menu-drawer,
-  .menu-open > .menu-drawer__submenu:not(.menu-drawer__menu--childlist) {
-    transform: translateX(0);
-    visibility: visible;
+  /* Top Bar & Close Button */
+  .menu-modal__top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 16px;
+    width: 100%;
+  }
+
+  .menu-drawer .menu-drawer__close-button {
+    position: relative;
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+    border-radius: 50% !important;
+    background-color: #ffffff !important;
+    border: 1px solid #e5e5e7 !important;
+    color: #18181b !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    cursor: pointer !important;
+    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) !important;
+  }
+
+  .menu-drawer .menu-drawer__close-button:hover {
+    background-color: #f8f8f8 !important;
+    border-color: #d4d4d8 !important;
+  }
+
+  .menu-drawer .menu-drawer__close-button:active {
+    transform: scale(0.95);
+  }
+
+  .menu-drawer .menu-drawer__close-button svg {
+    width: 12px !important;
+    height: 12px !important;
+    stroke: currentColor !important;
+  }
+
+  /* Search Bar */
+  .menu-modal__search-form {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .menu-modal__search-input-wrapper {
+    display: flex;
+    align-items: center;
+    background-color: #f3f4f6;
+    border-radius: 12px;
+    height: 46px;
+    padding: 0 16px;
+    gap: 12px;
+    transition: background-color 0.15s ease;
+  }
+
+  .menu-modal__search-form:hover .menu-modal__search-input-wrapper {
+    background-color: #eeeeef;
+  }
+
+  .menu-modal__search-icon {
+    color: #71717a;
+    width: 14px !important;
+    height: 14px !important;
+    min-width: 14px !important;
+    min-height: 14px !important;
+    flex-shrink: 0;
+  }
+
+  .menu-modal__search-input {
+    flex: 1;
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    outline: none !important;
+    font-size: 15px;
+    color: #18181b;
+    font-family: inherit;
+    padding: 0;
+    margin: 0;
+    box-shadow: none !important;
+    -webkit-appearance: none;
+  }
+
+  .menu-modal__search-input::placeholder {
+    color: #767676;
     opacity: 1;
+  }
+
+  /* Promo Tiles */
+  .menu-modal__promo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+    width: 100%;
+  }
+
+  .menu-modal__promo-card {
+    text-decoration: none;
+    color: inherit;
     display: flex;
     flex-direction: column;
+    gap: 8px;
+  }
+
+  .menu-modal__promo-media {
+    aspect-ratio: 1 / 1;
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #f4f4f5;
+  }
+
+  .menu-modal__promo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+
+  .menu-modal__promo-card:hover .menu-modal__promo-img {
+    transform: scale(1.03);
+  }
+
+  .menu-modal__promo-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #18181b;
+    line-height: 1.2;
+  }
+
+  /* Menu Items & Chevrons */
+  .menu-drawer .menu-drawer__navigation {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .menu-drawer .menu-drawer__menu {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    width: 100%;
+  }
+
+  .menu-drawer .menu-drawer__list-item,
+  .menu-drawer .menu-drawer__list-item--deep,
+  .menu-drawer .menu-drawer__list-item--flat {
+    padding: 0;
+    margin: 0;
+    border: none;
+    min-height: auto;
+  }
+
+  .menu-drawer .menu-drawer__menu-item {
+    font-size: 22px !important;
+    font-weight: 600 !important;
+    color: #111111 !important;
+    line-height: 1.25 !important;
+    padding-block: 12px !important;
+    padding-inline: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    text-decoration: none !important;
+    width: 100% !important;
+    border: none !important;
+    background: transparent !important;
+    letter-spacing: -0.01em !important;
+  }
+
+  .menu-drawer .menu-drawer__menu-item:hover {
+    color: #000000;
+  }
+
+  .menu-drawer .menu-drawer__link--sale,
+  .menu-drawer .menu-drawer__link--sale .menu-drawer__menu-item-text {
+    color: #e53935 !important;
+  }
+
+  .menu-drawer__chevron-badge {
+    width: 26px !important;
+    height: 26px !important;
+    min-width: 26px !important;
+    min-height: 26px !important;
+    border-radius: 50% !important;
+    background-color: #eef0f2 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #52525b !important;
+    margin-inline-start: auto !important;
+    flex-shrink: 0 !important;
+    transition: transform 0.2s ease, background-color 0.15s ease !important;
+  }
+
+  .menu-drawer__chevron-badge svg {
+    width: 10px !important;
+    height: 10px !important;
+    transform: none !important;
+    transition: transform 0.2s ease !important;
+  }
+
+  details[open] > summary .menu-drawer__chevron-badge svg {
+    transform: rotate(180deg) !important;
+  }
+
+  .menu-drawer .menu-drawer__menu--childlist {
+    padding-inline-start: 16px;
+    padding-block: 4px 10px;
+    list-style: none;
+    margin: 0;
+  }
+
+  .menu-drawer .menu-drawer__menu--childlist .menu-drawer__menu-item {
+    font-size: 15px;
+    font-weight: 500;
+    color: #52525b;
+    padding-block: 6px;
+  }
+
+  .menu-drawer .menu-drawer__menu--childlist .menu-drawer__menu-item:hover {
+    color: #18181b;
+  }
+
+  /* Bottom Footer */
+  .menu-modal__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 18px;
+    margin-top: auto;
+    border-top: 1px solid #f0f0f0;
+    width: 100%;
+    flex-shrink: 0;
+  }
+
+  .menu-modal__currency-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .menu-modal__flag {
+    display: flex;
+    align-items: center;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .menu-modal__currency-text {
+    font-size: 13px;
+    font-weight: 700;
+    color: #18181b;
+  }
+
+  .menu-modal__account-link {
+    font-size: 13px;
+    font-weight: 700;
+    color: #18181b;
+    text-decoration: none;
+    transition: opacity 0.15s ease;
+  }
+
+  .menu-modal__account-link:hover {
+    opacity: 0.7;
+  }
+
+  .menu-drawer .menu-drawer__utility-links,
+  .menu-drawer .menu-drawer__featured-content {
+    display: none !important;
   }
 
   .menu-drawer__inner-container {
@@ -1540,3 +1915,78 @@
     transform: none;
   }
 {% endstylesheet %}
+
+{% liquid
+  assign raw_phrases = settings.search_placeholder_phrases | default: 'Search Threadheads..., Search for oversized tees..., Search for graphic tees..., Search for hoodies...'
+  assign display_seconds = settings.search_placeholder_display_time | default: 2.0
+%}
+
+<script>
+  (function initMenuDrawerTypewriter() {
+    function setup() {
+      var input = document.getElementById('menu-modal-search-input');
+      if (!input) return;
+
+      var raw = {{ raw_phrases | json }};
+      var phrases = (raw || '')
+        .split(/[\r\n,]+/)
+        .map(function(p) { return p.trim(); })
+        .filter(function(p) { return p.length > 0; });
+
+      if (phrases.length === 0) {
+        phrases = ['Search Threadheads...', 'Search for oversized tees...', 'Search for graphic tees...', 'Search for hoodies...'];
+      }
+
+      var displayTime = Math.round(({{ display_seconds }} || 2.0) * 1000);
+      var phraseIdx = 0;
+      var charIdx = 0;
+      var isDeleting = false;
+      var timerId = null;
+
+      function tick() {
+        if (input.value && input.value.trim().length > 0) {
+          return;
+        }
+
+        var current = phrases[phraseIdx];
+        if (!isDeleting) {
+          charIdx++;
+          input.setAttribute('placeholder', current.substring(0, charIdx));
+
+          if (charIdx >= current.length) {
+            isDeleting = true;
+            timerId = setTimeout(tick, displayTime);
+            return;
+          }
+          timerId = setTimeout(tick, 60);
+        } else {
+          charIdx--;
+          input.setAttribute('placeholder', current.substring(0, charIdx));
+
+          if (charIdx <= 0) {
+            isDeleting = false;
+            phraseIdx = (phraseIdx + 1) % phrases.length;
+            timerId = setTimeout(tick, 320);
+            return;
+          }
+          timerId = setTimeout(tick, 35);
+        }
+      }
+
+      input.addEventListener('input', function() {
+        if (!input.value || input.value.trim().length === 0) {
+          if (timerId) clearTimeout(timerId);
+          tick();
+        }
+      });
+
+      tick();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setup);
+    } else {
+      setup();
+    }
+  })();
+</script>

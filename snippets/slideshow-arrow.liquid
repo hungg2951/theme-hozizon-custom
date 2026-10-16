@@ -41,27 +41,92 @@
   on:click="/{{ action }}"
   ref="{{ action }}"
 >
-  <span class="svg-wrapper icon-{{ icon_name }}">
-    {%- if icon_name == 'caret' -%}
-      {{- 'icon-caret.svg' | inline_asset_content -}}
-    {%- else -%}
+  {%- if icon_name == 'caret' -%}
+    <span class="svg-wrapper icon-animated-arrow">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line class="arrow-shaft" x1="4.5" y1="10" x2="15" y2="10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <path class="arrow-head" d="M11 6L15 10L11 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+  {%- else -%}
+    <span class="svg-wrapper icon-default icon-{{ icon_name }}">
       {{- 'icon-arrow.svg' | inline_asset_content -}}
-    {%- endif -%}
-  </span>
+    </span>
+    <span class="svg-wrapper icon-hover icon-arrow">
+      {{- 'icon-arrow.svg' | inline_asset_content -}}
+    </span>
+  {%- endif -%}
 </button>
 
 {% stylesheet %}
+  .slideshow-control .icon-hover {
+    display: none;
+  }
+
+  .slideshow-control:hover .icon-default {
+    display: none;
+  }
+
+  .slideshow-control:hover .icon-hover {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Animated Arrow (Chevron to Arrow transition like Threadheads) */
+  .slideshow-control .icon-animated-arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    line-height: 0;
+  }
+
+  .slideshow-control .icon-animated-arrow svg {
+    width: 20px !important;
+    height: 20px !important;
+    overflow: visible;
+  }
+
+  .slideshow-control .icon-animated-arrow .arrow-head {
+    transform: translateX(-3.5px);
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .slideshow-control .icon-animated-arrow .arrow-shaft {
+    opacity: 0;
+    transform: translateX(-3.5px) scaleX(0);
+    transform-origin: right center;
+    transform-box: fill-box;
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+  }
+
+  .slideshow-control:hover .icon-animated-arrow .arrow-head,
+  .slideshow-control:focus-visible .icon-animated-arrow .arrow-head {
+    transform: translateX(0);
+  }
+
+  .slideshow-control:hover .icon-animated-arrow .arrow-shaft,
+  .slideshow-control:focus-visible .icon-animated-arrow .arrow-shaft {
+    opacity: 1;
+    transform: translateX(0) scaleX(1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .slideshow-control .icon-animated-arrow .arrow-head,
+    .slideshow-control .icon-animated-arrow .arrow-shaft {
+      transition: none !important;
+    }
+  }
+
   .slideshow-control--large {
     .icon-caret {
       --icon-stroke-width: 1px;
     }
 
-    .icon-caret {
-      --icon-stroke-width: 1px;
-    }
-
-    .svg-wrapper,
-    svg {
+    .svg-wrapper:not(.icon-animated-arrow),
+    svg:not(.icon-animated-arrow svg) {
       width: var(--slideshow-controls-icon);
       height: var(--slideshow-controls-icon);
     }
@@ -74,12 +139,26 @@
     align-items: center;
     justify-content: center;
     aspect-ratio: 1 / 1;
-    background-color: var(--color-primary-button-background);
-    color: var(--color-primary-button-text);
+    background-color: #ffffff;
+    color: #1a1a1a;
   }
 
   .slideshow-control.slideshow-control--shape-circle {
     border-radius: 50%;
+    width: 56px;
+    height: 56px;
+    min-width: 56px;
+    min-height: 56px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.25s ease, border-color 0.2s ease, background-color 0.2s ease;
+  }
+
+  .slideshow-control.slideshow-control--shape-circle:hover {
+    color: #1a1a1a;
+    background-color: #ffffff;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+    border-color: rgba(0, 0, 0, 0.12);
   }
 
   .slideshow-control.slideshow-control--shape-square {
