@@ -409,9 +409,8 @@ class PredictiveSearchComponent extends Component {
     return abortController;
   }
 
-  #resetSearch = async () => {
+  #resetSearch = () => {
     const { predictiveSearchResults, searchInput } = this.refs;
-    const emptySectionId = 'predictive-search-empty';
 
     this.#currentIndex = -1;
     searchInput.value = '';
@@ -422,43 +421,13 @@ class PredictiveSearchComponent extends Component {
       initialContent.removeAttribute('hidden');
     }
 
-    const abortController = this.#createAbortController();
-    const url = new URL(window.location.href);
-    url.searchParams.delete('page');
+    this.#createAbortController();
 
-    const emptySectionMarkup = await sectionRenderer.getSectionHTML(emptySectionId, false, url);
-    const parsedEmptySectionMarkup = new DOMParser()
-      .parseFromString(emptySectionMarkup, 'text/html')
-      .querySelector('.predictive-search-empty-section');
-
-    if (!parsedEmptySectionMarkup) throw new Error('No empty section markup found');
-
-    /** This needs to be awaited and not .then so the DOM is already morphed
-     * when #closeResults is called and therefore the height is animated */
-    const viewedProducts = RecentlyViewed.getProducts();
-
-    if (viewedProducts.length > 0) {
-      const recentlyViewedMarkup = await this.#getRecentlyViewedProductsMarkup();
-      if (!recentlyViewedMarkup) return;
-
-      const parsedRecentlyViewedMarkup = new DOMParser().parseFromString(recentlyViewedMarkup, 'text/html');
-      const recentlyViewedProductsHtml = parsedRecentlyViewedMarkup.getElementById('predictive-search-products');
-      if (!recentlyViewedProductsHtml) return;
-
-      for (const child of recentlyViewedProductsHtml.children) {
-        if (child instanceof HTMLElement) {
-          child.setAttribute('ref', 'recentlyViewedWrapper');
-        }
-      }
-
-      const collectionElement = parsedEmptySectionMarkup.querySelector('#predictive-search-products');
-      if (!collectionElement) return;
-      collectionElement.prepend(...recentlyViewedProductsHtml.children);
+    if (predictiveSearchResults) {
+      predictiveSearchResults.innerHTML = `
+        <div id="predictive-search-results" class="predictive-search-dropdown" role="listbox" aria-expanded="true"></div>
+      `;
     }
-
-    if (abortController.signal.aborted) return;
-
-    morph(predictiveSearchResults, parsedEmptySectionMarkup);
     this.#resetScrollPositions();
   };
 }

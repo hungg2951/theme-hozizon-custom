@@ -35,7 +35,21 @@
     aria-label="{{ 'actions.close' | t }}"
   >
     <span class="svg-wrapper">
-      {{- 'icon-close.svg' | inline_asset_content -}}
+      {%- if drawer_id == 'cart-drawer' -%}
+        <svg
+          role="presentation"
+          stroke-width="2"
+          focusable="false"
+          width="24"
+          height="24"
+          class="icon icon-close"
+          viewBox="0 0 24 24"
+        >
+          <path d="M17.658 6.343 6.344 17.657M17.658 17.657 6.344 6.343" stroke="currentColor"></path>
+        </svg>
+      {%- else -%}
+        {{- 'icon-close.svg' | inline_asset_content -}}
+      {%- endif -%}
     </span>
   </button>
 </div>

@@ -13,6 +13,10 @@
 {%- enddoc -%}
 
 {% liquid
+  if product_view_context == 'search'
+    assign image_hover = false
+  endif
+
   if image_aspect_ratio == blank or image_aspect_ratio == 'adapt'
     assign ratio = resource.featured_image.aspect_ratio
   else
@@ -105,7 +109,7 @@
             data-media-id: featured_image.id,
             style: primary_focal_point_style
         }}
-        {%- if image_hover and resource.media.size > 1 -%}
+        {%- if image_hover and resource.media.size > 1 and product_view_context != 'search' -%}
           {% liquid
             assign secondary_focal_point_style = ''
             if resource.media[1].presentation.focal_point != blank

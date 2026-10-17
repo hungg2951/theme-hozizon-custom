@@ -24,33 +24,24 @@
 
     @media (any-pointer: fine) and (prefers-reduced-motion: no-preference) {
       {% if active_hover_effect == 'lift' %}
-        .card-hover-effect-lift .product-card:hover,
-        .card-hover-effect-lift .collection-card:hover,
-        .card-hover-effect-lift .predictive-search-results__card:hover {
+        .card-hover-effect-lift .collection-card:hover {
           transform: translateY(calc(-1 * var(--hover-lift-amount)));
         }
       {% endif %}
 
       {% if active_hover_effect == 'scale' %}
-        .card-hover-effect-scale .product-card:hover,
-        .card-hover-effect-scale .collection-card:hover,
-        .card-hover-effect-scale .predictive-search-results__card:hover {
+        .card-hover-effect-scale .collection-card:hover {
           transform: scale(var(--hover-scale-amount));
         }
       {% endif %}
 
       {% if active_hover_effect == 'subtle-zoom' %}
-        .card-hover-effect-subtle-zoom .card-gallery,
-        .card-hover-effect-subtle-zoom .collection-card__image,
-        .card-hover-effect-subtle-zoom .product-card__image {
+        .card-hover-effect-subtle-zoom .collection-card__image {
           overflow: hidden;
           transition: transform var(--hover-transition-duration) var(--hover-transition-timing);
         }
 
-        .card-hover-effect-subtle-zoom .product-card:hover .card-gallery,
-        .card-hover-effect-subtle-zoom .collection-card:hover .collection-card__image,
-        .card-hover-effect-subtle-zoom .product-card:hover .product-card__image,
-        .card-hover-effect-subtle-zoom .predictive-search-results__card:hover {
+        .card-hover-effect-subtle-zoom .collection-card:hover .collection-card__image {
           transform: scale(var(--hover-subtle-zoom-amount));
         }
       {% endif %}
@@ -59,9 +50,24 @@
 {% endif %}
 
 {% stylesheet %}
-  .product-card:hover,
-  .collection-card:hover,
-  .predictive-search-results__card:hover {
+  .collection-card:hover {
     z-index: var(--layer-raised);
+  }
+
+  .product-card,
+  .product-card:hover,
+  .product-card *,
+  .product-card:hover *,
+  .predictive-search-results__card,
+  .predictive-search-results__card:hover,
+  .predictive-search-results__card *,
+  .predictive-search-results__card:hover *,
+  .resource-card,
+  .resource-card:hover,
+  .resource-card *,
+  .resource-card:hover * {
+    transform: none !important;
+    -webkit-transform: none !important;
+    box-shadow: none !important;
   }
 {% endstylesheet %}

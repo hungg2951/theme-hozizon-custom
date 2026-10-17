@@ -60,9 +60,9 @@
         >
           <div class="predictive-search-form__header-inner">
             <span class="desktop-search-modal-icon" aria-hidden="true">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              <svg role="presentation" stroke-width="2" focusable="false" width="18" height="18" class="icon icon-search" viewBox="0 0 22 22" fill="none">
+                <circle cx="11" cy="10" r="7" fill="none" stroke="currentColor"></circle>
+                <path d="m16 15 3 3" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"></path>
               </svg>
             </span>
             <label
@@ -112,73 +112,15 @@
               ref="closeModalButton"
             >
               <span class="svg-wrapper">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                  <path d="M1 1L13 13M13 1L1 13" />
+                <svg role="presentation" stroke-width="1.5" focusable="false" width="24" height="24" class="icon icon-close" viewBox="0 0 24 24" fill="none">
+                  <path d="M17.658 6.343 6.344 17.657M17.658 17.657 6.344 6.343" stroke="currentColor"></path>
                 </svg>
               </span>
             </button>
           </div>
         </div>
 
-        {% comment %} Desktop Initial Content (Popular Now + Trending matching Threadheads image) {% endcomment %}
-        <div class="desktop-search-initial-content" ref="desktopInitialContent">
-          <div class="desktop-search-popular">
-            <span class="desktop-search-section-label">POPULAR NOW</span>
-            <div class="desktop-search-popular__grid">
-              {% liquid
-                assign popular_collection = settings.empty_state_collection | default: collections['all']
-                if popular_collection == blank or popular_collection.products_count == 0
-                  assign popular_collection = collections.first
-                endif
-                assign count = 0
-              %}
-              {% if popular_collection and popular_collection.products_count > 0 %}
-                {% for product in popular_collection.products limit: 4 %}
-                  {% assign count = count | plus: 1 %}
-                  <a href="{{ product.url }}" class="desktop-search-popular__card">
-                    <div class="desktop-search-popular__image-wrap">
-                      {% if product.featured_media %}
-                        <img
-                          src="{{ product.featured_media | image_url: width: 300, height: 300, crop: 'center' }}"
-                          alt="{{ product.featured_media.alt | default: product.title | escape }}"
-                          width="300"
-                          height="300"
-                          loading="lazy"
-                        >
-                      {% else %}
-                        {{ 'product-apparel-1' | placeholder_svg_tag: 'desktop-search-popular__placeholder' }}
-                      {% endif %}
-                    </div>
-                    <span class="desktop-search-popular__title">{{ product.title }}</span>
-                  </a>
-                {% endfor %}
-              {% endif %}
-              {% if count < 4 %}
-                {% assign fallback_titles = 'Custom Bootleg Tee,Oversized Tee 4 Pack: Black Charcoal Natural...,Undiagnosed T-Shirt,Oversized Tee' | split: ',' %}
-                {% for fallback_title in fallback_titles offset: count limit: 4 %}
-                  <a href="{{ routes.all_products_collection_url }}" class="desktop-search-popular__card">
-                    <div class="desktop-search-popular__image-wrap">
-                      {{ 'product-apparel-1' | placeholder_svg_tag: 'desktop-search-popular__placeholder' }}
-                    </div>
-                    <span class="desktop-search-popular__title">{{ fallback_title }}</span>
-                  </a>
-                {% endfor %}
-              {% endif %}
-            </div>
-          </div>
 
-          <div class="desktop-search-trending">
-            <span class="desktop-search-section-label">TRENDING</span>
-            <ul class="desktop-search-trending__list list-unstyled">
-              <li><a href="{{ routes.search_url }}?q=Looney+Tunes&options%5Bprefix%5D=last">Looney Tunes</a></li>
-              <li><a href="{{ routes.search_url }}?q=oversized+tees&options%5Bprefix%5D=last">oversized tees</a></li>
-              <li><a href="{{ routes.search_url }}?q=custom+t-shirt+printing&options%5Bprefix%5D=last">custom t-shirt printing</a></li>
-              <li><a href="{{ routes.search_url }}?q=blank+tees&options%5Bprefix%5D=last">blank tees</a></li>
-              <li><a href="{{ routes.search_url }}?q=Sesame+Street&options%5Bprefix%5D=last">Sesame Street</a></li>
-              <li><a href="{{ routes.search_url }}?q=Harry+Potter&options%5Bprefix%5D=last">Harry Potter</a></li>
-            </ul>
-          </div>
-        </div>
 
         <div class="predictive-search-form__content-wrapper">
           <div
@@ -191,15 +133,6 @@
               shadow_opacity: 0,
               products_test_id: 'products-list-default--modal'
             %}
-          </div>
-
-          <div class="predictive-search-form__footer">
-            <button
-              class="button predictive-search__search-button"
-              ref="viewAllButton"
-            >
-              {{ 'content.search_results_view_all' | t }}
-            </button>
           </div>
         </div>
       </form>
@@ -342,6 +275,18 @@
           focusSearchInput();
         });
       });
+
+      // Unfocus (blur) search input when clicking/tapping outside of the input header
+      var dialogEl = input.closest('dialog') || document.querySelector('.search-modal__content');
+      if (dialogEl) {
+        var blurSearchInput = function(e) {
+          if (!e.target.closest('.predictive-search-form__header')) {
+            input.blur();
+          }
+        };
+        dialogEl.addEventListener('click', blurSearchInput);
+        dialogEl.addEventListener('pointerdown', blurSearchInput);
+      }
 
       tick();
     }
@@ -492,16 +437,27 @@
     }
   }
 
-  /* Add new rule to apply bottom padding only when search button exists */
   .predictive-search-form__content-wrapper:has([data-search-results]):not(:has(.predictive-search-results__no-results))
-    > .predictive-search-form__content {
-    padding-block-end: var(--padding-6xl);
+    > .predictive-search-form__content,
+  .search-modal .predictive-search-form__content,
+  .dialog-modal .predictive-search-form__content,
+  .predictive-search-form__content,
+  .search-modal .predictive-search-form__content-wrapper > .predictive-search-form__content {
+    padding-block-end: 0 !important;
+    padding-inline-end: 0 !important;
+  }
+
+  @media screen and (min-width: 750px) {
+    .search-modal .predictive-search-form__footer,
+    .dialog-modal .predictive-search-form__footer,
+    .predictive-search-form__footer {
+      display: none !important;
+    }
   }
 
   .predictive-search-form__header-inner {
     background: transparent;
     border: none !important;
-    border-bottom: 2px solid #000000 !important;
     color: var(--color-foreground);
     border-radius: 0 !important;
     display: flex;
@@ -510,6 +466,29 @@
     width: 100%;
     padding-bottom: 6px;
     box-sizing: border-box;
+  }
+
+  @media screen and (min-width: 750px) {
+    .predictive-search-form__header-inner {
+      border-bottom: 2px solid #000000 !important;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .predictive-search-form__header-inner,
+    .dialog-modal .predictive-search-form__header-inner {
+      border: none !important;
+      border-bottom: 2px solid #e5e7eb !important;
+      transition: border-bottom-color 0.2s ease !important;
+    }
+
+    .predictive-search-form__header-inner:focus-within,
+    .dialog-modal .predictive-search-form__header-inner:focus-within,
+    .predictive-search-form__header-inner:has(.search-input:focus),
+    .dialog-modal .predictive-search-form__header-inner:has(.search-input:focus) {
+      border-bottom: 2px solid #000000 !important;
+      border-bottom-color: #000000 !important;
+    }
   }
 
   .predictive-search-form__header {
@@ -529,7 +508,7 @@
     }
 
     @media screen and (max-width: 749px) {
-      padding: 16px 16px 16px;
+      padding: 16px 16px !important;
     }
   }
 
@@ -538,8 +517,6 @@
   .predictive-search-form__header-inner:has(.search-input:is(:focus, :focus-visible)) {
     outline: none;
     box-shadow: none;
-    /* stylelint-disable-next-line declaration-no-important */
-    border-color: var(--color-border) !important;
   }
 
   input.search-input {
@@ -613,8 +590,8 @@
     }
 
     &:active {
-      transform: scale(0.9);
-      transition: transform 100ms var(--animation-timing-active);
+      transform: none !important;
+      transition: none !important;
     }
 
     @media screen and (min-width: 750px) {
@@ -644,9 +621,8 @@
   }
 
   .predictive-search__reset-button:active .predictive-search__reset-button-icon {
-    transform: scale(0.85);
-    transition-timing-function: var(--animation-timing-active);
-    transition-duration: 100ms;
+    transform: none !important;
+    transition: none !important;
   }
 
   .predictive-search__reset-button svg {
@@ -656,7 +632,7 @@
 
   .predictive-search__reset-button-text {
     display: inline-block;
-    font-size: 14px;
+    font-size: 13px;
     color: #767676;
   }
 
@@ -693,14 +669,28 @@
     box-shadow: none;
 
     &:active {
-      transform: scale(0.8);
-      transition: transform 100ms var(--animation-timing-active);
+      transform: none !important;
+      transition: none !important;
     }
 
     .svg-wrapper,
     svg {
-      width: var(--icon-size-xs);
-      height: var(--icon-size-xs);
+      width: 24px !important;
+      height: 24px !important;
+    }
+
+    @media screen and (max-width: 749px) {
+      width: 24px !important;
+      height: 24px !important;
+      min-width: 24px !important;
+      min-height: 24px !important;
+      margin-inline-start: 0 !important;
+
+      .svg-wrapper,
+      svg {
+        width: 24px !important;
+        height: 24px !important;
+      }
     }
   }
 

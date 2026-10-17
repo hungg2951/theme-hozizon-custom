@@ -40,20 +40,19 @@
 
 {% capture account_icon %}
   <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="15"
-    height="17"
-    viewBox="0 0 15 17"
+    role="presentation"
+    stroke-width="2"
+    focusable="false"
+    width="22"
+    height="22"
+    class="icon icon-account account-button__icon"
+    viewBox="0 0 22 22"
     fill="none"
     slot="signed-out-avatar"
-    class="account-button__icon"
+    xmlns="http://www.w3.org/2000/svg"
   >
-    <path
-      stroke="currentColor"
-      stroke-linejoin="round"
-      stroke-width="var(--icon-stroke-width)"
-      d="M10.375 3.813a3.063 3.063 0 1 1-6.125 0 3.063 3.063 0 0 1 6.125 0ZM7.313 9.5c-3.667 0-6.24 2.691-6.563 6.125h13.125C13.552 12.191 10.979 9.5 7.312 9.5Z"
-    />
+    <circle cx="11" cy="7" r="4" fill="none" stroke="currentColor"></circle>
+    <path d="M3.5 19c1.421-2.974 4.247-5 7.5-5s6.079 2.026 7.5 5" fill="none" stroke="currentColor" stroke-linecap="round"></path>
   </svg>
 {% endcapture %}
 
@@ -265,23 +264,13 @@
   }
 
   .header-actions__cart-icon.header-actions__cart-icon--has-cart svg {
-    /* Create donut mask where the cart bubble sits */
-    mask: radial-gradient(
-      calc(var(--cart-bubble-size) + 2px) at calc(100% - var(--cart-bubble-right)) var(--cart-bubble-top),
-      transparent 45.45%,
-      #fff 45.45%,
-      #fff 100%
-    );
+    mask: none;
+    -webkit-mask: none;
   }
 
-  /* Mask positions are physical; the bubble sits at the inline-end (left in RTL) */
   [dir='rtl'] .header-actions__cart-icon.header-actions__cart-icon--has-cart svg {
-    mask: radial-gradient(
-      calc(var(--cart-bubble-size) + 2px) at var(--cart-bubble-right) var(--cart-bubble-top),
-      transparent 45.45%,
-      #fff 45.45%,
-      #fff 100%
-    );
+    mask: none;
+    -webkit-mask: none;
   }
 
   .cart-bubble.cart-bubble--animating .cart-bubble__background {
