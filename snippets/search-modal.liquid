@@ -20,6 +20,15 @@
   fetchpriority="low"
 ></script>
 
+{% liquid
+  assign raw_phrases = settings.search_placeholder_phrases | default: 'Search Threadheads..., Search for oversized tees..., Search for graphic tees..., Search for hoodies...'
+  assign display_seconds = settings.search_placeholder_display_time | default: 2.0
+  assign initial_placeholder = raw_phrases | newline_to_br | split: '<br />' | first | split: ',' | first | strip
+  if initial_placeholder == blank
+    assign initial_placeholder = 'content.search_input_placeholder' | t
+  endif
+%}
+
 <dialog-component
   id="search-modal"
   class="search-modal"
@@ -84,7 +93,7 @@
               aria-autocomplete="list"
               autocomplete="off"
               autofocus
-              placeholder="{{ 'content.search_input_placeholder' | t }}"
+              placeholder="{{ initial_placeholder | escape }}"
               ref="searchInput"
               on:input="/search"
               on:keydown="/onSearchKeyDown"
