@@ -1927,7 +1927,7 @@
         "id": "search_placeholder_phrases",
         "label": "t:settings.search_placeholder_phrases",
         "info": "t:settings.search_placeholder_phrases_info",
-        "default": "Search Threadheads...\nSearch for oversized tees...\nSearch for graphic tees...\nSearch for hoodies..."
+        "default": "Search Threadheads\nSearch for oversized tees\nSearch for graphic tees\nSearch for hoodies"
       },
       {
         "type": "range",
