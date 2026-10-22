@@ -2770,7 +2770,16 @@ script,
     z-index: 10 !important;
   }
 
-  .header__drawer summary.header__icon--menu {
+  .header__drawer summary.header__icon--menu,
+  .header__drawer summary.header__icon--menu:hover,
+  .header__drawer summary.header__icon--menu:focus,
+  .header__drawer summary.header__icon--menu:focus-visible,
+  .header__drawer summary.header__icon--menu:active,
+  .header__drawer summary.header__icon--summary,
+  .header__drawer summary.header__icon--summary:hover,
+  .header__drawer summary.header__icon--summary:focus,
+  .header__drawer summary.header__icon--summary:focus-visible,
+  .header__drawer summary.header__icon--summary:active {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -2781,7 +2790,30 @@ script,
     margin: 0 !important;
     cursor: pointer !important;
     color: #444444 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    outline-color: transparent !important;
     list-style: none !important;
+    transform: none !important;
+    -webkit-transform: none !important;
+    transition: none !important;
+    animation: none !important;
+    opacity: 1 !important;
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-touch-callout: none !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+  }
+
+  .header__drawer summary.header__icon--menu::after,
+  .header__drawer summary.header__icon--menu::before,
+  .header__drawer summary.header__icon--summary::after,
+  .header__drawer summary.header__icon--summary::before {
+    display: none !important;
+    content: none !important;
   }
 
   .header__drawer summary.header__icon--menu::-webkit-details-marker {
@@ -2810,6 +2842,26 @@ script,
     display: block !important;
     color: #444444 !important;
     stroke: #444444 !important;
+  }
+
+  /* Mobile Menu Modal Close Button: no effect on click/active/focus */
+  .menu-drawer .menu-drawer__close-button,
+  .menu-drawer .menu-drawer__close-button:hover,
+  .menu-drawer .menu-drawer__close-button:focus,
+  .menu-drawer .menu-drawer__close-button:focus-visible,
+  .menu-drawer .menu-drawer__close-button:active {
+    outline: none !important;
+    outline-color: transparent !important;
+    transform: none !important;
+    -webkit-transform: none !important;
+    transition: none !important;
+    animation: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  .menu-drawer .menu-drawer__close-button:focus-visible::after {
+    display: none !important;
+    content: none !important;
   }
 
   /* Hide duplicate desktop search and extra search triggers on mobile */
@@ -3268,18 +3320,43 @@ script,
   }
 }
 
-#cart-drawer .theme-drawer__close-button {
+#cart-drawer .theme-drawer__close-button,
+#cart-drawer .theme-drawer__close-button:hover,
+#cart-drawer .theme-drawer__close-button:focus,
+#cart-drawer .theme-drawer__close-button:focus-visible,
+#cart-drawer .theme-drawer__close-button:active {
   width: 24px !important;
   height: 24px !important;
   background: transparent !important;
+  background-color: transparent !important;
   border: none !important;
   box-shadow: none !important;
+  outline: none !important;
+  outline-color: transparent !important;
+  color: var(--color-foreground, #1a1a1a) !important;
+  border-radius: 0 !important;
+  opacity: 1 !important;
+  transform: none !important;
+  -webkit-transform: none !important;
+  transition: none !important;
+  animation: none !important;
+  view-transition-name: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+#cart-drawer .theme-drawer__close-button::after,
+#cart-drawer .theme-drawer__close-button::before {
+  display: none !important;
+  content: none !important;
 }
 
 #cart-drawer .theme-drawer__close-button .svg-wrapper,
 #cart-drawer .theme-drawer__close-button svg {
   width: 24px !important;
   height: 24px !important;
+  transform: none !important;
+  -webkit-transform: none !important;
+  transition: none !important;
 }
 
 cart-drawer-component,

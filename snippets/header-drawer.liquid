@@ -890,8 +890,27 @@
     transform: rotate(-90deg);
   }
 
-  .header__icon--menu {
+  .header__icon--menu,
+  .header__icon--menu:hover,
+  .header__icon--menu:focus,
+  .header__icon--menu:focus-visible,
+  .header__icon--menu:active,
+  .menu-drawer-container .header__icon--summary,
+  .menu-drawer-container .header__icon--summary:hover,
+  .menu-drawer-container .header__icon--summary:focus,
+  .menu-drawer-container .header__icon--summary:focus-visible,
+  .menu-drawer-container .header__icon--summary:active {
     position: initial;
+    outline: none !important;
+    outline-color: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    transform: none !important;
+    -webkit-transform: none !important;
+    transition: none !important;
+    animation: none !important;
+    opacity: 1 !important;
+    -webkit-tap-highlight-color: transparent !important;
   }
 
   .menu-drawer-container .header__icon--summary {
@@ -1057,7 +1076,11 @@
     width: 100%;
   }
 
-  .menu-drawer .menu-drawer__close-button {
+  .menu-drawer .menu-drawer__close-button,
+  .menu-drawer .menu-drawer__close-button:hover,
+  .menu-drawer .menu-drawer__close-button:focus,
+  .menu-drawer .menu-drawer__close-button:focus-visible,
+  .menu-drawer .menu-drawer__close-button:active {
     position: relative;
     width: 40px !important;
     height: 40px !important;
@@ -1073,17 +1096,19 @@
     padding: 0 !important;
     margin: 0 !important;
     cursor: pointer !important;
-    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease !important;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) !important;
+    outline: none !important;
+    outline-color: transparent !important;
+    transform: none !important;
+    -webkit-transform: none !important;
+    transition: none !important;
+    animation: none !important;
+    -webkit-tap-highlight-color: transparent !important;
   }
 
-  .menu-drawer .menu-drawer__close-button:hover {
-    background-color: #f8f8f8 !important;
-    border-color: #d4d4d8 !important;
-  }
-
-  .menu-drawer .menu-drawer__close-button:active {
-    transform: scale(0.95);
+  .menu-drawer .menu-drawer__close-button:focus-visible::after {
+    display: none !important;
+    content: none !important;
   }
 
   .menu-drawer .menu-drawer__close-button svg {

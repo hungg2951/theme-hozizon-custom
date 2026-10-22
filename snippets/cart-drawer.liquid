@@ -683,11 +683,18 @@
     border-bottom: 1px solid var(--color-border, #f0f0f0);
   }
 
-  #cart-drawer .theme-drawer__close-button {
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    color: var(--color-foreground, #1a1a1a);
+  #cart-drawer .theme-drawer__close-button,
+  #cart-drawer .theme-drawer__close-button:hover,
+  #cart-drawer .theme-drawer__close-button:focus,
+  #cart-drawer .theme-drawer__close-button:focus-visible,
+  #cart-drawer .theme-drawer__close-button:active {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    outline-color: transparent !important;
+    color: var(--color-foreground, #1a1a1a) !important;
     width: 24px;
     height: 24px;
     display: flex;
@@ -695,12 +702,20 @@
     justify-content: center;
     padding: 0;
     cursor: pointer;
-    border-radius: 50%;
-    transition: opacity 0.15s ease;
+    border-radius: 0;
+    opacity: 1 !important;
+    transform: none !important;
+    -webkit-transform: none !important;
+    transition: none !important;
+    animation: none !important;
+    view-transition-name: none !important;
+    -webkit-tap-highlight-color: transparent !important;
   }
 
-  #cart-drawer .theme-drawer__close-button:hover {
-    opacity: 0.65;
+  #cart-drawer .theme-drawer__close-button::after,
+  #cart-drawer .theme-drawer__close-button::before {
+    display: none !important;
+    content: none !important;
   }
 
   #cart-drawer .theme-drawer__close-button .svg-wrapper,
@@ -708,6 +723,9 @@
     width: 24px;
     height: 24px;
     display: block;
+    transform: none !important;
+    -webkit-transform: none !important;
+    transition: none !important;
   }
 
   #cart-drawer .cart-drawer__close-button--empty {
