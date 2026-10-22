@@ -3643,3 +3643,28 @@ cart-drawer-component,
     padding: 0 !important;
   }
 }
+
+/* Mobile: Product carousel card width so 2 cards are shown and the 3rd card peeks ~15px */
+@container resource-list-carousel (max-width: 699px) {
+  .resource-list__carousel .resource-list__slide {
+    --mobile-slide-width: calc(
+      (100cqw - (var(--gutter-slide-width, 0px) * 2) - (var(--resource-list-column-gap, 2px) * 2) - 15px) / 2
+    );
+    --slide-width: var(--mobile-slide-width);
+    width: var(--mobile-slide-width) !important;
+    max-width: var(--mobile-slide-width) !important;
+    flex: 0 0 var(--mobile-slide-width) !important;
+  }
+}
+
+@media screen and (max-width: 699px) {
+  .resource-list__carousel .resource-list__slide {
+    --mobile-slide-width: calc(
+      (100vw - (var(--gutter-slide-width, 0px) * 2) - (var(--resource-list-column-gap, 2px) * 2) - 15px) / 2
+    );
+    --slide-width: var(--mobile-slide-width);
+    width: var(--mobile-slide-width) !important;
+    max-width: var(--mobile-slide-width) !important;
+    flex: 0 0 var(--mobile-slide-width) !important;
+  }
+}
