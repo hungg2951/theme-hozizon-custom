@@ -76,7 +76,7 @@
   @container resource-list-carousel (max-width: 699px) {
     .resource-list__carousel .resource-list__slide {
       --mobile-slide-width: calc(
-        (100cqw - (var(--gutter-slide-width, 0px) * 2) - (var(--resource-list-column-gap, 2px) * 2) - 15px) / 2
+        (100cqw - var(--gutter-slide-width, 0px) - (var(--resource-list-column-gap, 2px) * 2) - 15px) / 2
       );
       --slide-width: var(--mobile-slide-width);
       width: var(--mobile-slide-width) !important;
@@ -88,7 +88,7 @@
   @media screen and (max-width: 699px) {
     .resource-list__carousel .resource-list__slide {
       --mobile-slide-width: calc(
-        (100vw - (var(--gutter-slide-width, 0px) * 2) - (var(--resource-list-column-gap, 2px) * 2) - 15px) / 2
+        (100vw - var(--gutter-slide-width, 0px) - (var(--resource-list-column-gap, 2px) * 2) - 15px) / 2
       );
       --slide-width: var(--mobile-slide-width);
       width: var(--mobile-slide-width) !important;

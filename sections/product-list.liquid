@@ -14,6 +14,9 @@
   data-testid="product-list"
   class="
     section
+    section--tight
+    section-blends
+    section-full
     section--{{ section.settings.section_width }}
     {% if section.settings.background_color != blank %}color-custom-{{ section.id }}{% endif %}
     section-resource-list
@@ -30,38 +33,30 @@
   </div>
 
   {% capture list_items %}
-    {% if section.settings.collection != blank and shop.products_count != 0 %}
-      {% paginate section.settings.collection.products by max_items %}
-        {% for product in section.settings.collection.products limit: max_items %}
-        <div
-          class="resource-list__item"
-        >
-            {% content_for 'block',
-              type: '_product-card',
-              id: 'static-product-card',
-              closest.product: product,
-              product_view_context: 'collection'
-            %}
-          </div>
-
-          {% unless forloop.last %}
-            <!--@list/split-->
-          {% endunless %}
-        {% endfor %}
-      {% endpaginate %}
-    {% else %}
-      {% for i in (1..max_items) %}
-        <div
-          class="resource-list__item"
-        >
-            {% content_for 'block', type: '_product-card', id: 'static-product-card', closest.product: null %}
-        </div>
-
-        {% unless forloop.last %}
-          <!--@list/split-->
-        {% endunless %}
-      {% endfor %}
-    {% endif %}
+    {% liquid
+      if section.settings.collection != blank and shop.products_count != 0
+        assign products = section.settings.collection.products
+      else
+        assign products = null
+        for i in (1..max_items)
+          assign products = products | append: ', '
+          assign products = products | split: ','
+        endfor
+      endif
+    %}
+    {% for product in products limit: max_items %}
+      <div class="resource-list__item">
+        {% content_for 'block',
+          type: '_product-card',
+          id: 'static-product-card',
+          closest.product: product,
+          product_view_context: 'collection'
+        %}
+      </div>
+      {% unless forloop.last %}
+        <!--@list/split-->
+      {% endunless %}
+    {% endfor %}
   {% endcapture %}
 
   {% liquid

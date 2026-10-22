@@ -108,7 +108,7 @@
           <div class="slideshow-controls__thumbnails">
             {% for media in thumbnails %}
               <button
-                class="slideshow-control button button-unstyled slideshow-controls__thumbnail"
+                class="slideshow-control button button-unstyled slideshow-controls__thumbnail product-gallery__thumbnail"
                 aria-label="{{ 'accessibility.slide_status' | t: index: forloop.index, length: forloop.length }}"
                 on:click="/select/{{ forloop.index0 }}"
                 style="--aspect-ratio: {% if aspect_ratio == 'adapt' %}{{ media.preview_image.aspect_ratio | default: 1.0 }}{% else %}{{ aspect_ratio }}{% endif %};"
@@ -244,7 +244,7 @@
     justify-content: space-between;
   }
 
-  @media screen and (min-width: 750px) {
+  @media screen and (min-width: 1150px) {
     slideshow-controls[thumbnails]:is([pagination-position='right'], [pagination-position='left']) {
       display: flex;
       flex-direction: column;
@@ -269,19 +269,14 @@
 
     slideshow-controls:is([pagination-position='right'], [pagination-position='left']) .slideshow-controls__thumbnails {
       flex-direction: column;
+      gap: var(--spacing-2-5);
+      row-gap: 0.625rem;
+      column-gap: 0.625rem;
     }
 
     slideshow-controls:not([controls-on-media]) {
       &:is([pagination-position='left'], [pagination-position='right']) .slideshow-controls__thumbnails {
-        padding-block: var(--padding-2xs);
-      }
-
-      &[pagination-position='right'] .slideshow-controls__thumbnails {
-        padding-inline-end: var(--slideshow-thumbnails-padding-inline, var(--focus-outline-offset));
-      }
-
-      &[pagination-position='left'] .slideshow-controls__thumbnails {
-        padding-inline-start: var(--slideshow-thumbnails-padding-inline, var(--focus-outline-offset));
+        padding: 0;
       }
     }
   }
@@ -447,35 +442,77 @@
 
   .slideshow-controls__thumbnails {
     display: inline-flex;
-    padding-inline: var(--slideshow-thumbnails-padding-inline, var(--padding-sm));
-    padding-block: var(--slideshow-thumbnails-padding-block, var(--padding-sm));
-    gap: var(--gap-xs);
-    margin-inline: auto;
+    padding: 0;
+    gap: var(--spacing-4);
+    row-gap: 1rem;
+    column-gap: 1rem;
+    margin: 0;
+    margin-inline: 0;
+    justify-content: flex-start;
     height: fit-content;
 
     .slideshow-control {
       border-radius: var(--thumbnail-radius, var(--media-radius));
-      width: clamp(44px, 7vw, var(--thumbnail-width));
+      width: 56px;
       height: auto;
-      aspect-ratio: var(--aspect-ratio);
+      aspect-ratio: auto;
+      overflow: visible;
 
       img {
-        height: 100%;
+        width: 56px;
+        height: 70px;
+        aspect-ratio: 56 / 70;
         object-fit: cover;
         border-radius: var(--thumbnail-radius, var(--media-radius));
+        display: block;
       }
 
-      &:is([aria-selected='true']) {
-        outline: var(--focus-outline-width) solid currentcolor;
-        outline-offset: calc(var(--focus-outline-offset) / 2);
-        border: var(--style-border-width) solid rgb(var(--color-border-rgb) / var(--media-border-opacity));
+      &:is([aria-selected='true'], .is-active) {
+        outline: none;
+        border: none;
+        box-shadow: none;
+      }
+    }
+
+    @media screen and (min-width: 750px) {
+      .slideshow-control {
+        width: 64px;
+
+        img {
+          width: 64px;
+          height: 80px;
+          aspect-ratio: 64 / 80;
+        }
       }
     }
   }
 
-  .slideshow-controls__thumbnail {
+  .slideshow-controls__thumbnail,
+  .product-gallery__thumbnail {
     position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: visible;
   }
+
+  .slideshow-controls__thumbnail:after,
+  .product-gallery__thumbnail:after {
+    content: "";
+    opacity: 0;
+    background: currentColor;
+    width: 100%;
+    height: 2px;
+    margin-block-start: 4px;
+    transition: none !important;
+    display: block;
+  }
+
+  .slideshow-controls__thumbnail:is([aria-selected='true'], .is-active):after,
+  .product-gallery__thumbnail:is([aria-selected='true'], .is-active):after {
+    opacity: 1 !important;
+  }
+
 
   .slideshow-controls__thumbnail-badge {
     position: absolute;

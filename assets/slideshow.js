@@ -233,7 +233,11 @@ export class Slideshow extends Component {
 
     event?.preventDefault();
 
-    const { animate = true } = options;
+    const isThumbnailClick = Boolean(
+      event?.target instanceof Element &&
+      event.target.closest('.slideshow-controls__thumbnail, .product-gallery__thumbnail, [ref="thumbnails[]"]')
+    );
+    const { animate = !isThumbnailClick } = options;
     const lastIndex = slides.length - 1;
 
     // Decide the actual target index (clamp for infinite loop)
@@ -426,7 +430,11 @@ export class Slideshow extends Component {
     if (current) current.textContent = `${value + 1}`;
 
     for (const controls of [thumbnails, dots]) {
-      controls?.forEach((el, i) => el.setAttribute('aria-selected', `${i === value}`));
+      controls?.forEach((el, i) => {
+        const isSelected = i === value;
+        el.setAttribute('aria-selected', `${isSelected}`);
+        el.classList.toggle('is-active', isSelected);
+      });
     }
 
     const isStepOne = this.getAttribute('step') === '1' || this.classList.contains('resource-list__carousel');

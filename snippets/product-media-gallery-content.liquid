@@ -390,20 +390,18 @@
           {% else %}
             {%- render 'product-media', media: media, sizes: media_sizes, is_main_product_media: forloop.first -%}
           {% endif %}
+
+
         {% endcapture %}
         {% capture class %}
-          {{ product_media_container_class }} product-media-container--{{ media.media_type }}{% if block_settings.zoom %} product-media-container--zoomable{% endif %}{% if forloop.index0 == lowest_aspect_ratio_index and block_settings.aspect_ratio == 'adapt' %} product-media-container--tallest{% endif %}
+          {{ product_media_container_class }} product-media-container--{{ media.media_type }}{% if forloop.index0 == lowest_aspect_ratio_index and block_settings.aspect_ratio == 'adapt' %} product-media-container--tallest{% endif %}
         {% endcapture %}
         {% if block_settings.aspect_ratio == 'adapt' %}
           {% capture style %}
             --media-preview-ratio: {{ media.preview_image.aspect_ratio | default: 1.0 }};
           {% endcapture %}
         {% endif %}
-        {% if block_settings.zoom and media.media_type == 'model' %}
-          {%- capture attributes -%}"{% if settings.transition_to_main_product and forloop.first %} data-view-transition-type="product-image-transition"{% endif %}{% endcapture -%}
-        {% elsif block_settings.zoom %}
-          {%- capture attributes -%}on:click="#zoom-dialog-{{ block_id }}/open/{{ forloop.index0 }}"{% if settings.transition_to_main_product and forloop.first %} data-view-transition-type="product-image-transition"{% endif %}{% endcapture -%}
-        {% endif %}
+        {%- capture attributes -%}{% if settings.transition_to_main_product and forloop.first %} data-view-transition-type="product-image-transition"{% endif %}{% endcapture -%}
 
         {% render 'slideshow-slide',
           index: forloop.index0,
@@ -446,11 +444,29 @@
       {% endcapture %}
     {% endif %}
 
-    {% if render_slideshow_arrows %}
-      {% capture slideshow_arrows %}
-        {% render 'slideshow-arrows', class: 'mobile:hidden', icon_style: block_settings.icons_style %}
-      {% endcapture %}
-    {% endif %}
+    {% capture slideshow_arrows %}
+      {%- if sorted_media.size > 1 -%}
+        <button type="button" class="product-gallery__nav-zone product-gallery__nav-zone--prev" on:click="/previous" aria-label="{{ 'accessibility.slideshow_previous' | t }}" tabindex="-1"></button>
+        <button type="button" class="product-gallery__nav-zone product-gallery__nav-zone--next" on:click="/next" aria-label="{{ 'accessibility.slideshow_next' | t }}" tabindex="-1"></button>
+      {%- endif -%}
+
+      {%- if block_settings.zoom -%}
+        <button
+          type="button"
+          class="product-gallery__zoom-button"
+          aria-label="{{ 'actions.zoom_media' | t: index: 1 }}"
+          on:click="media-gallery/zoom"
+          on:pointerenter="media-gallery/preloadImage"
+        >
+          <span class="visually-hidden">{{ 'actions.zoom_media' | t: index: 1 }}</span>
+          <svg role="presentation" fill="none" stroke-width="2" focusable="false" width="15" height="15" class="icon icon-image-zoom" viewBox="0 0 15 15">
+            <circle cx="7.067" cy="7.067" r="6.067" stroke="currentColor"></circle>
+            <path d="M11.4 11.4 14 14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M7 4v6M4 7h6" stroke="currentColor"></path>
+          </svg>
+        </button>
+      {%- endif -%}
+    {% endcapture %}
 
     {% render 'slideshow',
       ref: 'slideshow',
@@ -516,21 +532,23 @@
         id="zoom-dialog-{{ block_id }}"
       >
         <dialog
-          class="dialog-zoomed-gallery__dialog"
+          class="dialog-zoomed-gallery__dialog pswp"
           ref="dialog"
           on:keydown="/handleKeyDown"
           scroll-lock
         >
           <button
             type="button"
-            class="button button-unstyled close-button dialog-zoomed-gallery__close-button"
+            class="button button-unstyled close-button dialog-zoomed-gallery__close-button pswp__button--close"
             aria-label="{{ 'actions.close' | t }}"
             on:click="/close"
           >
             <span class="visually-hidden">{{ 'actions.close' | t }}</span>
-            {{ 'icon-close.svg' | inline_asset_content }}
+            <svg aria-hidden="true" width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="m22.344 22.343 11.313 11.314m-11.313 0 11.313-11.313" stroke="#252627" stroke-width="2" stroke-linecap="round"></path>
+            </svg>
           </button>
-          <div class="dialog-thumbnails-list-container">
+          <div class="dialog-thumbnails-list-container" style="display: none;">
             <scroll-hint
               class="dialog-thumbnails-list list-unstyled"
               ref="thumbnails"
@@ -577,17 +595,14 @@
             </scroll-hint>
           </div>
           <ul
-            class="dialog-zoomed-gallery list-unstyled"
+            class="dialog-zoomed-gallery list-unstyled pswp__container"
           >
             {%- for media in sorted_media -%}
               <li
                 id="product-{{ media.id}}-{{ forloop.index }}"
-                class="{{ product_media_container_class | remove: 'media-fit-cover' }} product-media-container--{{ media.media_type }}{% if media.media_type == 'image' %} product-media-container--zoomable{% endif %}"
+                class="{{ product_media_container_class | remove: 'media-fit-cover' }} product-media-container--{{ media.media_type }} pswp__item"
                 style="{% if block_settings.aspect_ratio == 'adapt' %} --media-preview-ratio: {{ media.preview_image.aspect_ratio | default: 1.0 }};{% endif %}"
                 ref="media[]"
-                {% if media.media_type == 'image' %}
-                  on:click="/close"
-                {% endif %}
               >
                 {% if media.media_type == 'image' %}
                   <drag-zoom-wrapper class="product-media__drag-zoom-wrapper">
@@ -610,6 +625,42 @@
               </li>
             {%- endfor -%}
           </ul>
+
+          {% if sorted_media.size > 1 %}
+            <div class="pswp__counter-pill">
+              <button
+                type="button"
+                class="pswp__pill-arrow pswp__pill-arrow--prev button button-unstyled"
+                aria-label="{{ 'accessibility.slideshow_previous' | t }}"
+                on:click="/previousImage"
+              >
+                <span class="svg-wrapper icon-animated-arrow">
+                  <svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <line class="arrow-shaft" x1="4.5" y1="10" x2="15" y2="10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    <path class="arrow-head" d="M11 6L15 10L11 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+              </button>
+              <span class="pswp__pill-count">
+                <span class="pswp__pill-current">1</span>
+                <span class="pswp__pill-separator">/</span>
+                <span class="pswp__pill-total">{{ sorted_media.size }}</span>
+              </span>
+              <button
+                type="button"
+                class="pswp__pill-arrow pswp__pill-arrow--next button button-unstyled"
+                aria-label="{{ 'accessibility.slideshow_next' | t }}"
+                on:click="/nextImage"
+              >
+                <span class="svg-wrapper icon-animated-arrow">
+                  <svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <line class="arrow-shaft" x1="4.5" y1="10" x2="15" y2="10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    <path class="arrow-head" d="M11 6L15 10L11 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+              </button>
+            </div>
+          {% endif %}
         </dialog>
       </zoom-dialog>
     {%- endif -%}
@@ -829,7 +880,7 @@
       display: flex;
       scroll-snap-type: x mandatory;
       overflow-x: hidden;
-      scroll-behavior: smooth;
+      scroll-behavior: auto !important;
       height: 100%;
 
       &::-webkit-scrollbar {
@@ -1039,8 +1090,12 @@
     }
   }
 
-  @media screen and (min-width: 750px) {
+  @media screen and (min-width: 1150px) {
     .media-gallery--carousel slideshow-component:has(slideshow-controls[thumbnails]) {
+      gap: var(--spacing-6) var(--spacing-12);
+      row-gap: 1.5rem;
+      column-gap: 3rem;
+
       &:has(slideshow-controls[pagination-position='right']) {
         display: grid;
         grid-template:

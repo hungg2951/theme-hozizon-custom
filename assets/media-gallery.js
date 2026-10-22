@@ -71,15 +71,18 @@ export class MediaGallery extends Component {
    * @param {PointerEvent} event - The pointer event.
    */
   zoom(index, event) {
-    this.refs.zoomDialogComponent?.open(index, event);
+    const targetIndex = typeof index === 'number' ? index : (this.slideshow?.current ?? 0);
+    const evt = event || (index instanceof Event ? index : undefined);
+    this.refs.zoomDialogComponent?.open(targetIndex, evt);
   }
 
   /**
    * Preloads an image.
-   * @param {number} index - The index of the media to preload.
+   * @param {number} [index] - The index of the media to preload.
    */
   preloadImage(index) {
-    const zoomDialogMedia = this.refs.zoomDialogComponent?.refs.media[index];
+    const targetIndex = typeof index === 'number' ? index : (this.slideshow?.current ?? 0);
+    const zoomDialogMedia = this.refs.zoomDialogComponent?.refs.media[targetIndex];
     if (!zoomDialogMedia) return;
 
     this.refs.zoomDialogComponent?.loadHighResolutionImage(zoomDialogMedia);

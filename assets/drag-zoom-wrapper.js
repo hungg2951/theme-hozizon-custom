@@ -58,7 +58,12 @@ export class DragZoomWrapper extends Component {
     this.#initResizeListener();
     window.addEventListener(DialogCloseEvent.eventName, this.#resetZoom);
 
-    if (!isMobileBreakpoint()) return;
+    if (isMobileBreakpoint()) {
+      this.#scale = 1;
+      this.#translate = { x: 0, y: 0 };
+      this.#updateTransform();
+      return;
+    }
 
     this.#initEventListeners();
     this.#updateTransform();
@@ -91,7 +96,14 @@ export class DragZoomWrapper extends Component {
   }
 
   #handleResize = () => {
-    if (!this.#initialized && isMobileBreakpoint()) {
+    if (isMobileBreakpoint()) {
+      this.#scale = 1;
+      this.#translate = { x: 0, y: 0 };
+      this.#updateTransform();
+      return;
+    }
+
+    if (!this.#initialized && !isMobileBreakpoint()) {
       this.#initEventListeners();
     }
 
