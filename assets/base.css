@@ -2073,8 +2073,14 @@ script,
 .hero script,
 .hero__content-wrapper style,
 .hero__content-wrapper script,
+.hero .hero__content-wrapper style,
+.hero .hero__content-wrapper script,
 .hero__content-wrapper * style,
 .hero__content-wrapper * script,
+.hero .hero__content-wrapper * style,
+.hero .hero__content-wrapper * script,
+.hero .shopify-block style,
+.hero .shopify-block script,
 .hero .group-block-content style,
 .hero .group-block-content script,
 .hero .group-block-content > style,
@@ -2178,12 +2184,12 @@ script,
     margin-right: auto !important;
     margin-top: auto !important;
     padding-inline: 20px !important;
-    padding-bottom: 12px !important;
+    padding-bottom: 24px !important;
     box-sizing: border-box !important;
   }
 
-  .hero__content-wrapper > *,
-  .hero .hero__content-wrapper > *,
+  .hero__content-wrapper > :not(style):not(script),
+  .hero .hero__content-wrapper > :not(style):not(script),
   .hero__content-wrapper .shopify-block,
   .hero .hero__content-wrapper .shopify-block {
     display: flex !important;

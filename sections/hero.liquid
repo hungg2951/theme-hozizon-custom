@@ -793,12 +793,20 @@
   }
 
   /* Prevent style and script tags from ever rendering visually */
+  style,
+  script,
   .hero style,
   .hero script,
   .hero__content-wrapper style,
   .hero__content-wrapper script,
+  .hero .hero__content-wrapper style,
+  .hero .hero__content-wrapper script,
   .hero__content-wrapper * style,
   .hero__content-wrapper * script,
+  .hero .hero__content-wrapper * style,
+  .hero .hero__content-wrapper * script,
+  .hero .shopify-block style,
+  .hero .shopify-block script,
   .hero .group-block-content style,
   .hero .group-block-content script,
   .hero .group-block-content > style,
@@ -896,7 +904,7 @@
       margin-left: 0 !important;
       margin-right: auto !important;
       padding-inline: 20px !important;
-      padding-bottom: 12px !important;
+      padding-bottom: 24px !important;
       box-sizing: border-box !important;
     }
 
