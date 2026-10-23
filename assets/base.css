@@ -1,4 +1,4 @@
-﻿* {
+* {
   box-sizing: border-box;
 }
 
@@ -1120,6 +1120,13 @@ summary:hover {
   padding-inline: var(--padding-inline-start) var(--padding-inline-end);
   margin-block: var(--margin-block-start) var(--margin-block-end);
   margin-inline: var(--margin-inline-start) var(--margin-inline-end);
+}
+
+@media screen and (max-width: 749px) {
+  .product-information {
+    padding-block-start: 0 !important;
+    --padding-block-start: 0px !important;
+  }
 }
 
 /* Size style */
@@ -3734,6 +3741,28 @@ cart-drawer-component,
   margin: 0 !important;
   cursor: pointer !important;
   flex-shrink: 0 !important;
+  -webkit-tap-highlight-color: transparent !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -webkit-touch-callout: none !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+.product-gallery__thumbnail:hover,
+.product-gallery__thumbnail:active,
+.product-gallery__thumbnail:focus,
+.product-gallery__thumbnail:focus-visible,
+.slideshow-controls__thumbnail:hover,
+.slideshow-controls__thumbnail:active,
+.slideshow-controls__thumbnail:focus,
+.slideshow-controls__thumbnail:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+  transition: none !important;
+  background: transparent !important;
+  -webkit-tap-highlight-color: transparent !important;
 }
 
 .product-gallery__thumbnail img,
@@ -3747,6 +3776,30 @@ cart-drawer-component,
   border: none !important;
   outline: none !important;
   box-shadow: none !important;
+  -webkit-user-drag: none;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  pointer-events: none;
+  transform: none !important;
+  transition: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+.product-gallery__thumbnail:hover img,
+.product-gallery__thumbnail:active img,
+.product-gallery__thumbnail:focus img,
+.product-gallery__thumbnail:focus-visible img,
+.slideshow-controls__thumbnail:hover img,
+.slideshow-controls__thumbnail:active img,
+.slideshow-controls__thumbnail:focus img,
+.slideshow-controls__thumbnail:focus-visible img {
+  transform: none !important;
+  transition: none !important;
+  opacity: 1 !important;
+  filter: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-tap-highlight-color: transparent !important;
 }
 
 @media screen and (min-width: 750px) {
@@ -3859,6 +3912,7 @@ cart-drawer-component,
     scrollbar-width: none !important;
     padding: 0 !important;
     margin: 0 !important;
+    scroll-padding-inline: var(--util-page-margin-offset, var(--page-margin, 16px)) !important;
     -webkit-overflow-scrolling: touch;
   }
 
@@ -3875,13 +3929,21 @@ cart-drawer-component,
     gap: var(--spacing-4) !important;
     row-gap: 1rem !important;
     column-gap: 1rem !important;
-    padding: 0 !important;
-    padding-inline: 0 !important;
+    padding-inline: var(--util-page-margin-offset, var(--page-margin, 16px)) !important;
     padding-block: 0 !important;
     margin: 0 !important;
     margin-inline: 0 !important;
     height: auto !important;
-    width: auto !important;
+    width: max-content !important;
+    min-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .media-gallery slideshow-slides,
+  .product-media-gallery slideshow-slides {
+    scroll-behavior: smooth !important;
   }
 }
 
@@ -4027,6 +4089,7 @@ media-gallery slideshow-arrows,
 }
 
 .product-gallery__zoom-button:hover,
+.product-gallery__zoom-button:active,
 .product-gallery__zoom-button:focus,
 .product-gallery__zoom-button:focus-visible {
   transform: none !important;
@@ -4034,6 +4097,30 @@ media-gallery slideshow-arrows,
   background-color: #ffffff !important;
   opacity: 1 !important;
   visibility: visible !important;
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+  user-select: none !important;
+}
+
+.product-gallery__zoom-button svg,
+.product-gallery__zoom-button:hover svg,
+.product-gallery__zoom-button:active svg,
+.product-gallery__zoom-button:focus svg,
+.product-gallery__zoom-button:focus-visible svg {
+  pointer-events: none;
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+.product-media-container__zoom-button,
+.product-media-container__zoom-button:hover,
+.product-media-container__zoom-button:active,
+.product-media-container__zoom-button:focus,
+.product-media-container__zoom-button:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-tap-highlight-color: transparent !important;
 }
 
 /* Top Right Circular Close Button */
@@ -4072,30 +4159,53 @@ media-gallery slideshow-arrows,
   outline: none !important;
 }
 
-.dialog-zoomed-gallery__close-button.pswp__button--close svg,
-.dialog-zoomed-gallery__close-button.pswp__button--close:hover svg,
-.dialog-zoomed-gallery__close-button.pswp__button--close:active svg,
-.dialog-zoomed-gallery__close-button.pswp__button--close:focus svg {
+.dialog-zoomed-gallery__close-button.pswp__button--close svg {
   width: 56px;
   height: 56px;
   display: block;
-  transition: none !important;
-  transform: none !important;
-  animation: none !important;
+  pointer-events: none;
+}
+
+@media screen and (min-width: 750px) {
+  .dialog-zoomed-gallery__close-button.pswp__button--close svg {
+    transform-origin: 50% 50% !important;
+    transform: rotate(0deg) !important;
+    transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1) !important;
+    will-change: transform;
+  }
+
+  .dialog-zoomed-gallery__close-button.pswp__button--close:hover svg,
+  .dialog-zoomed-gallery__close-button.pswp__button--close:focus-visible svg {
+    transform: rotate(90deg) !important;
+  }
 }
 
 @media screen and (max-width: 749px) {
-  .dialog-zoomed-gallery__close-button.pswp__button--close {
-    margin-block-start: var(--spacing-4, 1rem) !important;
-    margin-inline-end: var(--spacing-4, 1rem) !important;
+  .dialog-zoomed-gallery__close-button.pswp__button--close,
+  .dialog-zoomed-gallery__close-button.pswp__button--close:hover,
+  .dialog-zoomed-gallery__close-button.pswp__button--close:active,
+  .dialog-zoomed-gallery__close-button.pswp__button--close:focus,
+  .dialog-zoomed-gallery__close-button.pswp__button--close:focus-visible {
+    margin-block-start: max(var(--spacing-6, 1.5rem), calc(env(safe-area-inset-top, 0px) + 16px)) !important;
+    margin-inline-end: max(var(--spacing-6, 1.5rem), calc(env(safe-area-inset-right, 0px) + 16px)) !important;
     width: 56px !important;
     height: 56px !important;
+    background: #ffffff !important;
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+    user-select: none !important;
   }
 
   .dialog-zoomed-gallery__close-button.pswp__button--close svg,
   .dialog-zoomed-gallery__close-button.pswp__button--close:hover svg,
   .dialog-zoomed-gallery__close-button.pswp__button--close:active svg,
-  .dialog-zoomed-gallery__close-button.pswp__button--close:focus svg {
+  .dialog-zoomed-gallery__close-button.pswp__button--close:focus svg,
+  .dialog-zoomed-gallery__close-button.pswp__button--close:focus-visible svg {
     width: 56px !important;
     height: 56px !important;
     transition: none !important;
@@ -4107,7 +4217,7 @@ media-gallery slideshow-arrows,
     width: 100vw !important;
     height: 100vh !important;
     overflow-x: hidden !important;
-    touch-action: pan-y !important;
+    touch-action: none !important;
   }
 
   .dialog-zoomed-gallery .pswp__item {
@@ -4252,7 +4362,8 @@ dialog.dialog-zoomed-gallery__dialog.dialog--closing::backdrop {
 
 @media screen and (min-width: 750px) {
   dialog[open]:not(.dialog--closing) .dialog-zoomed-gallery.pswp__container {
-    animation: zoomGalleryEnterDesktop 0.32s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    animation: none !important;
+    transform: none !important;
   }
 
   dialog.dialog--closing .dialog-zoomed-gallery.pswp__container {
@@ -4262,7 +4373,8 @@ dialog.dialog-zoomed-gallery__dialog.dialog--closing::backdrop {
 
 @media screen and (max-width: 749px) {
   dialog[open]:not(.dialog--closing) .dialog-zoomed-gallery.pswp__container {
-    animation: zoomGalleryEnterMobile 0.32s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    animation: none !important;
+    transform: none !important;
   }
 
   dialog.dialog--closing .dialog-zoomed-gallery.pswp__container {
@@ -4289,10 +4401,13 @@ dialog.dialog--closing .pswp__counter-pill {
   dialog.dialog--closing .dialog-zoomed-gallery.pswp__container,
   dialog[open] .dialog-zoomed-gallery__close-button,
   dialog.dialog--closing .dialog-zoomed-gallery__close-button,
+  dialog[open] .dialog-zoomed-gallery__close-button svg,
+  dialog.dialog--closing .dialog-zoomed-gallery__close-button svg,
   dialog[open] .pswp__counter-pill,
   dialog.dialog--closing .pswp__counter-pill {
     animation: none !important;
     transform: none !important;
+    transition: none !important;
   }
 }
 

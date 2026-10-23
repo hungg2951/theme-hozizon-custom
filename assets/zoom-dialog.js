@@ -35,6 +35,10 @@ export class ZoomDialog extends Component {
   #touchStartY = 0;
   #touchStartTime = 0;
   #touchMoved = false;
+  /** @type {'horizontal' | 'vertical' | null} */
+  #touchDirection = null;
+  /** @type {HTMLElement | null} */
+  #activeDragElement = null;
 
   connectedCallback() {
     super.connectedCallback();
@@ -45,6 +49,7 @@ export class ZoomDialog extends Component {
     gallery?.addEventListener('touchstart', this.#handleTouchStart, { passive: true });
     gallery?.addEventListener('touchmove', this.#handleTouchMove, { passive: false });
     gallery?.addEventListener('touchend', this.#handleTouchEnd, { passive: true });
+    gallery?.addEventListener('touchcancel', this.#handleTouchCancel, { passive: true });
   }
 
   disconnectedCallback() {
@@ -57,6 +62,8 @@ export class ZoomDialog extends Component {
     gallery?.removeEventListener('touchstart', this.#handleTouchStart);
     gallery?.removeEventListener('touchmove', this.#handleTouchMove);
     gallery?.removeEventListener('touchend', this.#handleTouchEnd);
+    gallery?.removeEventListener('touchcancel', this.#handleTouchCancel);
+    this.#resetDragElement();
   }
 
   #handleTouchStart = (event) => {
@@ -66,6 +73,12 @@ export class ZoomDialog extends Component {
     this.#touchStartY = touch.clientY;
     this.#touchStartTime = performance.now();
     this.#touchMoved = false;
+    this.#touchDirection = null;
+
+    const { media } = this.refs;
+    const activeIndex = this.#getCurrentIndex();
+    const currentSlide = media?.[activeIndex];
+    this.#activeDragElement = currentSlide?.querySelector('img.product-media__image, img') || currentSlide || null;
   };
 
   #handleTouchMove = (event) => {
@@ -74,31 +87,91 @@ export class ZoomDialog extends Component {
     const deltaX = touch.clientX - this.#touchStartX;
     const deltaY = touch.clientY - this.#touchStartY;
 
-    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 10) {
+    if (!this.#touchDirection) {
+      if (Math.abs(deltaX) > 8 || Math.abs(deltaY) > 8) {
+        this.#touchDirection = Math.abs(deltaY) > Math.abs(deltaX) ? 'vertical' : 'horizontal';
+      }
+    }
+
+    if (this.#touchDirection === 'horizontal') {
       this.#touchMoved = true;
       if (event.cancelable) event.preventDefault();
+    } else if (this.#touchDirection === 'vertical') {
+      this.#touchMoved = true;
+      if (event.cancelable) event.preventDefault();
+
+      if (this.#activeDragElement) {
+        const opacity = Math.max(0.4, 1 - Math.abs(deltaY) / 500);
+        this.#activeDragElement.style.transition = 'none';
+        this.#activeDragElement.style.transform = `translateY(${deltaY}px)`;
+        this.#activeDragElement.style.opacity = String(opacity);
+      }
     }
   };
 
   #handleTouchEnd = (event) => {
-    if (!this.#touchMoved) return;
+    if (!this.#touchMoved) {
+      this.#resetDragElement();
+      return;
+    }
     const touch = event.changedTouches?.[0];
-    if (!touch) return;
+    if (!touch) {
+      this.#resetDragElement();
+      return;
+    }
     const deltaX = touch.clientX - this.#touchStartX;
     const deltaY = touch.clientY - this.#touchStartY;
     const deltaTime = performance.now() - this.#touchStartTime;
 
-    const isQuickSwipe = deltaTime < 400 && Math.abs(deltaX) > 25;
-    const isLongSwipe = Math.abs(deltaX) > 40;
+    if (this.#touchDirection === 'vertical') {
+      const isQuickSwipe = deltaTime < 400 && Math.abs(deltaY) > 30;
+      const isLongDrag = Math.abs(deltaY) > 60;
 
-    if ((isQuickSwipe || isLongSwipe) && Math.abs(deltaX) > Math.abs(deltaY)) {
-      if (deltaX < 0) {
-        this.nextImage();
+      if (isQuickSwipe || isLongDrag) {
+        this.#resetDragElement();
+        this.close();
       } else {
-        this.previousImage();
+        if (this.#activeDragElement) {
+          this.#activeDragElement.style.transition = 'transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.25s ease';
+          this.#activeDragElement.style.transform = 'translateY(0px)';
+          this.#activeDragElement.style.opacity = '1';
+          setTimeout(() => this.#resetDragElement(), 250);
+        } else {
+          this.#resetDragElement();
+        }
+      }
+      return;
+    }
+
+    if (this.#touchDirection === 'horizontal') {
+      const isQuickSwipe = deltaTime < 400 && Math.abs(deltaX) > 25;
+      const isLongSwipe = Math.abs(deltaX) > 40;
+
+      if ((isQuickSwipe || isLongSwipe) && Math.abs(deltaX) > Math.abs(deltaY)) {
+        if (deltaX < 0) {
+          this.nextImage();
+        } else {
+          this.previousImage();
+        }
       }
     }
+
+    this.#resetDragElement();
   };
+
+  #handleTouchCancel = () => {
+    this.#resetDragElement();
+  };
+
+  #resetDragElement() {
+    if (this.#activeDragElement) {
+      this.#activeDragElement.style.transform = '';
+      this.#activeDragElement.style.opacity = '';
+      this.#activeDragElement.style.transition = '';
+      this.#activeDragElement = null;
+    }
+    this.#touchDirection = null;
+  }
 
   /**
    * Opens the zoom dialog.
@@ -514,12 +587,8 @@ export class ZoomDialog extends Component {
     if (!media || !media.length) return;
 
     const currentIndex = this.#getCurrentIndex();
-    if (currentIndex <= 0) {
-      await this.#loopSlide('previous', currentIndex, media.length - 1);
-    } else {
-      const prevIndex = currentIndex - 1;
-      this.selectThumbnail(prevIndex, { behavior: prefersReducedMotion() ? 'instant' : 'smooth' });
-    }
+    const prevIndex = currentIndex <= 0 ? media.length - 1 : currentIndex - 1;
+    this.selectThumbnail(prevIndex, { behavior: 'instant' });
   }
 
   /**
@@ -533,12 +602,8 @@ export class ZoomDialog extends Component {
     if (!media || !media.length) return;
 
     const currentIndex = this.#getCurrentIndex();
-    if (currentIndex >= media.length - 1) {
-      await this.#loopSlide('next', currentIndex, 0);
-    } else {
-      const nextIndex = currentIndex + 1;
-      this.selectThumbnail(nextIndex, { behavior: prefersReducedMotion() ? 'instant' : 'smooth' });
-    }
+    const nextIndex = currentIndex >= media.length - 1 ? 0 : currentIndex + 1;
+    this.selectThumbnail(nextIndex, { behavior: 'instant' });
   }
 
   /**
@@ -564,35 +629,36 @@ export class ZoomDialog extends Component {
    * Handles the selection of a thumbnail.
    * @param {number} index - The index of the thumbnail to select.
    * @param {Object} options - The options for the selection.
-   * @param {ScrollBehavior} options.behavior - The behavior of the scroll.
+   * @param {ScrollBehavior} [options.behavior] - The behavior of the scroll.
    */
-  async selectThumbnail(index, options = { behavior: 'smooth' }) {
+  async selectThumbnail(index, options = { behavior: 'instant' }) {
     if (this.#isLooping) return;
-    if (!this.refs.thumbnails || !this.refs.thumbnails.children.length) return;
+    const { media, thumbnails } = this.refs;
+    if (!media || !media.length) return;
 
     // Guard if invalid
-    if (isNaN(index) || index < 0 || index >= this.refs.thumbnails.children.length) return;
+    if (isNaN(index) || index < 0 || index >= media.length) return;
 
-    const { media, thumbnails } = this.refs;
-    const targetThumbnail = thumbnails.children[index];
+    if (thumbnails && thumbnails.children.length) {
+      const targetThumbnail = thumbnails.children[index];
+      if (targetThumbnail instanceof HTMLElement) {
+        Array.from(thumbnails.querySelectorAll('button')).forEach((button, i) => {
+          button.setAttribute('aria-selected', `${i === index}`);
+        });
 
-    if (!targetThumbnail || !(targetThumbnail instanceof HTMLElement)) return;
-
-    Array.from(thumbnails.querySelectorAll('button')).forEach((button, i) => {
-      button.setAttribute('aria-selected', `${i === index}`);
-    });
+        scrollIntoView(targetThumbnail, {
+          ancestor: thumbnails,
+          behavior: options.behavior || 'instant',
+          block: 'center',
+          inline: 'center',
+        });
+      }
+    }
 
     const pillCurrent = this.querySelector('.pswp__pill-current');
     if (pillCurrent) {
       pillCurrent.textContent = String(index + 1);
     }
-
-    scrollIntoView(targetThumbnail, {
-      ancestor: thumbnails,
-      behavior: options.behavior,
-      block: 'center',
-      inline: 'center',
-    });
 
     const targetImage = media[index];
 

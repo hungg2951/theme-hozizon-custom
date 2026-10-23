@@ -237,7 +237,7 @@ export class Slideshow extends Component {
       event?.target instanceof Element &&
       event.target.closest('.slideshow-controls__thumbnail, .product-gallery__thumbnail, [ref="thumbnails[]"]')
     );
-    const { animate = !isThumbnailClick } = options;
+    const { animate = true } = options;
     const lastIndex = slides.length - 1;
 
     // Decide the actual target index (clamp for infinite loop)

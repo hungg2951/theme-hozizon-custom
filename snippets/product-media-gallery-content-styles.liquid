@@ -173,6 +173,7 @@
   }
 
   .product-gallery__zoom-button:hover,
+  .product-gallery__zoom-button:active,
   .product-gallery__zoom-button:focus,
   .product-gallery__zoom-button:focus-visible {
     transform: none !important;
@@ -180,6 +181,30 @@
     background-color: #ffffff !important;
     opacity: 1 !important;
     visibility: visible !important;
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+    user-select: none !important;
+  }
+
+  .product-gallery__zoom-button svg,
+  .product-gallery__zoom-button:hover svg,
+  .product-gallery__zoom-button:active svg,
+  .product-gallery__zoom-button:focus svg,
+  .product-gallery__zoom-button:focus-visible svg {
+    pointer-events: none;
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .product-media-container__zoom-button,
+  .product-media-container__zoom-button:hover,
+  .product-media-container__zoom-button:active,
+  .product-media-container__zoom-button:focus,
+  .product-media-container__zoom-button:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+    -webkit-tap-highlight-color: transparent !important;
   }
 
   /* Fullscreen PhotoSwipe Zoom Dialog */
@@ -281,7 +306,7 @@
     flex-direction: row;
     overflow-x: hidden;
     scroll-snap-type: x mandatory;
-    scroll-behavior: auto;
+    scroll-behavior: auto !important;
     height: 100vh;
     width: 100vw;
     margin: 0;
@@ -295,7 +320,8 @@
 
   @media screen and (min-width: 750px) {
     dialog[open]:not(.dialog--closing) .dialog-zoomed-gallery.pswp__container {
-      animation: zoomGalleryEnterDesktop 0.32s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+      animation: none !important;
+      transform: none !important;
     }
 
     dialog.dialog--closing .dialog-zoomed-gallery.pswp__container {
@@ -305,7 +331,8 @@
 
   @media screen and (max-width: 749px) {
     dialog[open]:not(.dialog--closing) .dialog-zoomed-gallery.pswp__container {
-      animation: zoomGalleryEnterMobile 0.32s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+      animation: none !important;
+      transform: none !important;
     }
 
     dialog.dialog--closing .dialog-zoomed-gallery.pswp__container {
@@ -332,10 +359,13 @@
     dialog.dialog--closing .dialog-zoomed-gallery.pswp__container,
     dialog[open] .dialog-zoomed-gallery__close-button,
     dialog.dialog--closing .dialog-zoomed-gallery__close-button,
+    dialog[open] .dialog-zoomed-gallery__close-button svg,
+    dialog.dialog--closing .dialog-zoomed-gallery__close-button svg,
     dialog[open] .pswp__counter-pill,
     dialog.dialog--closing .pswp__counter-pill {
       animation: none !important;
       transform: none !important;
+      transition: none !important;
     }
   }
 
@@ -388,7 +418,7 @@
       width: 100vw !important;
       height: 100vh !important;
       overflow-x: hidden !important;
-      touch-action: pan-y !important;
+      touch-action: none !important;
     }
 
     .dialog-zoomed-gallery .pswp__item {
@@ -465,30 +495,53 @@
     outline: none !important;
   }
 
-  .dialog-zoomed-gallery__close-button.pswp__button--close svg,
-  .dialog-zoomed-gallery__close-button.pswp__button--close:hover svg,
-  .dialog-zoomed-gallery__close-button.pswp__button--close:active svg,
-  .dialog-zoomed-gallery__close-button.pswp__button--close:focus svg {
+  .dialog-zoomed-gallery__close-button.pswp__button--close svg {
     width: 56px;
     height: 56px;
     display: block;
-    transition: none !important;
-    transform: none !important;
-    animation: none !important;
+    pointer-events: none;
+  }
+
+  @media screen and (min-width: 750px) {
+    .dialog-zoomed-gallery__close-button.pswp__button--close svg {
+      transform-origin: 50% 50% !important;
+      transform: rotate(0deg) !important;
+      transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1) !important;
+      will-change: transform;
+    }
+
+    .dialog-zoomed-gallery__close-button.pswp__button--close:hover svg,
+    .dialog-zoomed-gallery__close-button.pswp__button--close:focus-visible svg {
+      transform: rotate(90deg) !important;
+    }
   }
 
   @media screen and (max-width: 749px) {
-    .dialog-zoomed-gallery__close-button.pswp__button--close {
-      margin-block-start: var(--spacing-4, 1rem) !important;
-      margin-inline-end: var(--spacing-4, 1rem) !important;
+    .dialog-zoomed-gallery__close-button.pswp__button--close,
+    .dialog-zoomed-gallery__close-button.pswp__button--close:hover,
+    .dialog-zoomed-gallery__close-button.pswp__button--close:active,
+    .dialog-zoomed-gallery__close-button.pswp__button--close:focus,
+    .dialog-zoomed-gallery__close-button.pswp__button--close:focus-visible {
+      margin-block-start: max(var(--spacing-6, 1.5rem), calc(env(safe-area-inset-top, 0px) + 16px)) !important;
+      margin-inline-end: max(var(--spacing-6, 1.5rem), calc(env(safe-area-inset-right, 0px) + 16px)) !important;
       width: 56px !important;
       height: 56px !important;
+      background: #ffffff !important;
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
+      animation: none !important;
+      box-shadow: none !important;
+      outline: none !important;
+      -webkit-tap-highlight-color: transparent !important;
+      user-select: none !important;
     }
 
     .dialog-zoomed-gallery__close-button.pswp__button--close svg,
     .dialog-zoomed-gallery__close-button.pswp__button--close:hover svg,
     .dialog-zoomed-gallery__close-button.pswp__button--close:active svg,
-    .dialog-zoomed-gallery__close-button.pswp__button--close:focus svg {
+    .dialog-zoomed-gallery__close-button.pswp__button--close:focus svg,
+    .dialog-zoomed-gallery__close-button.pswp__button--close:focus-visible svg {
       width: 56px !important;
       height: 56px !important;
       transition: none !important;
