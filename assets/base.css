@@ -2468,9 +2468,42 @@ script,
 
 /* Threadheads Header Icons Alignment & Sizing */
 @media screen and (min-width: 750px) {
-  /* Hide duplicate mobile drawer search on desktop */
-  .search-action--hidden-on-menu {
+  /* Hide duplicate mobile drawer search & hamburger drawer on desktop */
+  .search-action--hidden-on-menu,
+  .header__drawer,
+  #header-component .header__drawer,
+  #header-component[data-menu-style='drawer'] .header__drawer,
+  .header__icon--menu,
+  .header__icon--summary,
+  .header-drawer-icon {
     display: none !important;
+    min-height: 0 !important;
+    pointer-events: none !important;
+  }
+
+  /* Always show desktop header menu on desktop */
+  #header-component .header-menu,
+  #header-component[data-menu-style='menu'] .header-menu,
+  #header-component[data-menu-style='drawer'] .header-menu {
+    display: flex !important;
+  }
+
+  /* Ensure header container and columns remain intact on desktop (prevent mobile 5-col grid & display: contents) */
+  #header-component .header__columns,
+  #header-component[data-menu-style='drawer'] .header__columns {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    grid-template-areas: none !important;
+    grid-template-columns: none !important;
+    column-gap: 0 !important;
+  }
+
+  #header-component .header__column,
+  #header-component[data-menu-style='drawer'] .header__column {
+    display: flex !important;
+    align-items: center !important;
   }
 
   .header__column--left {
@@ -2479,6 +2512,18 @@ script,
     justify-content: flex-start !important;
     gap: 32px !important;
     flex: 1 1 auto !important;
+  }
+
+  .header__column--left .header-logo {
+    display: flex !important;
+    align-items: center !important;
+    flex-shrink: 0 !important;
+  }
+
+  .header__column--left .header-logo img {
+    max-height: 26px !important;
+    width: auto !important;
+    display: block !important;
   }
 
   .header__column--center {
@@ -2494,7 +2539,49 @@ script,
     overflow: visible !important;
   }
 
+  .header__column--right .search-action {
+    order: 1 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    margin: 0 !important;
+  }
+
+  .header__column--right .dropdown-localization {
+    order: 2 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    margin: 0 !important;
+  }
+
+  .header__column--right .dropdown-localization .localization-selector {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    height: 34px !important;
+    min-height: 34px !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    cursor: pointer !important;
+  }
+
+  .header__column--right .dropdown-localization .icon-flag {
+    width: 22px !important;
+    height: 22px !important;
+    margin: 0 !important;
+    display: inline-block !important;
+    border-radius: 50% !important;
+  }
+
+  .header__column--right .dropdown-localization .currency-code,
+  .header__column--right .dropdown-localization .icon-caret {
+    display: none !important;
+  }
+
   .header__column--right header-actions {
+    order: 3 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: flex-end !important;
@@ -2705,24 +2792,24 @@ script,
   }
 }
 
-.header__icon--menu,
-.header__icon--summary {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 0 !important;
-  cursor: pointer !important;
-}
-
-.header__icon--menu svg,
-.header__icon--summary svg,
-.header-drawer-icon svg,
-.header__drawer svg {
-  width: 24px !important;
-  height: 24px !important;
-}
-
 @media screen and (max-width: 749px) {
+  .header__icon--menu,
+  .header__icon--summary {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    cursor: pointer !important;
+  }
+
+  .header__icon--menu svg,
+  .header__icon--summary svg,
+  .header-drawer-icon svg,
+  .header__drawer svg {
+    width: 24px !important;
+    height: 24px !important;
+  }
+
   #header-component {
     min-height: 48px !important;
     height: 48px !important;
@@ -4411,6 +4498,186 @@ dialog.dialog--closing .pswp__counter-pill {
   }
 }
 
+/* Product Details: Hide quantity selector, hide Buy it Now button, and remove Add to Cart button icon */
+.product-details .quantity-selector-wrapper,
+.product-details quantity-selector-component,
+.product-details .quantity-label,
+.product-details .quantity-rules,
+.product-details .accelerated-checkout-block,
+.product-details shopify-accelerated-checkout,
+.product-details .shopify-payment-button {
+  display: none !important;
+}
 
+.add-to-cart-button .add-to-cart-icon,
+.add-to-cart-button .add-to-cart-text > .svg-wrapper {
+  display: none !important;
+}
 
+@media screen and (min-width: 750px) {
+  .product-details {
+    --height-buy-buttons: 60px !important;
+  }
+
+  .product-details .add-to-cart-button,
+  .product-details .product-form-buttons button,
+  .product-form-buttons .add-to-cart-button {
+    height: 60px !important;
+    min-height: 60px !important;
+  }
+}
+
+/* Spacing between items in You may also like */
+.product-recommendations {
+  --product-list-gap: 3rem 1.5rem;
+}
+
+.product-recommendations .section-resource-list {
+  row-gap: 24px !important;
+}
+
+.product-recommendations .section-resource-list__content {
+  margin-bottom: 0 !important;
+}
+
+.product-recommendations .text-block--text_cbcgyb :is(h1, h2, h3, h4),
+.product-recommendations .section-resource-list__content :is(h1, h2, h3, h4) {
+  font-size: 26px !important;
+  margin-block: 0 12px !important;
+}
+
+@media screen and (min-width: 1400px) {
+  .product-recommendations .text-block--text_cbcgyb :is(h1, h2, h3, h4),
+  .product-recommendations .section-resource-list__content :is(h1, h2, h3, h4) {
+    font-size: 32px !important;
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .product-recommendations .section-resource-list {
+    row-gap: 16px !important;
+  }
+
+  .product-recommendations .text-block--text_cbcgyb :is(h1, h2, h3, h4),
+  .product-recommendations .section-resource-list__content :is(h1, h2, h3, h4) {
+    font-size: 26px !important;
+    margin-block-end: 8px !important;
+  }
+}
+
+.product-recommendations :is(.resource-list, .resource-list--grid, .resource-list__carousel > slideshow-container > slideshow-slides, slideshow-slides) {
+  gap: var(--product-list-gap) !important;
+  row-gap: 3rem !important;
+  column-gap: 1.5rem !important;
+}
+
+/* You may also like (product recommendations) carousel navigation arrows */
+.product-recommendations slideshow-arrows,
+.product-recommendations .resource-list__carousel slideshow-arrows {
+  position: absolute !important;
+  top: 56% !important;
+  bottom: auto !important;
+  inset-inline: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: auto !important;
+  transform: translateY(-50%) !important;
+  pointer-events: none !important;
+  z-index: var(--layer-heightened, 3) !important;
+  mix-blend-mode: normal !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding-inline: 20px !important;
+}
+
+.product-recommendations slideshow-arrows .slideshow-control,
+.product-recommendations .resource-list__carousel slideshow-arrows .slideshow-control {
+  pointer-events: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  width: 56px !important;
+  height: 56px !important;
+  min-width: 56px !important;
+  min-height: 56px !important;
+  max-width: 56px !important;
+  max-height: 56px !important;
+  background-color: #ffffff !important;
+  color: #1a1a1a !important;
+  border: 1px solid #e5e5e5 !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+  transition: opacity 0.25s ease, visibility 0.25s ease, background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease !important;
+  cursor: pointer !important;
+  animation: none !important;
+}
+
+/* Show arrows only when hovering over the product list block below */
+.product-recommendations :is(.resource-list, .resource-list__carousel, slideshow-container, slideshow-component):hover slideshow-arrows .slideshow-control:not([disabled]) {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+/* Force hide when not hovering, even if button was clicked or focused */
+.product-recommendations :is(.resource-list, .resource-list__carousel, slideshow-container, slideshow-component):not(:hover) slideshow-arrows .slideshow-control {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Hide all next/prev image buttons on individual product cards across entire store */
+.product-card slideshow-arrows,
+.card-gallery slideshow-arrows,
+.product-grid__card slideshow-arrows,
+product-card slideshow-arrows,
+.resource-list__item slideshow-arrows {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Button hover effect - keep existing size & effect */
+.product-recommendations slideshow-arrows .slideshow-control:not([disabled]):hover {
+  background-color: #f7f7f7 !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.16) !important;
+  transform: scale(1.08) !important;
+}
+
+.product-recommendations slideshow-arrows .slideshow-control svg,
+.product-recommendations slideshow-arrows .slideshow-control .icon-arrow,
+.product-recommendations slideshow-arrows .slideshow-control .icon-caret {
+  color: #1a1a1a !important;
+  stroke: currentColor !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.product-recommendations slideshow-arrows .slideshow-control[disabled] {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .product-recommendations slideshow-arrows {
+    display: none !important;
+  }
+}
+
+/* Hide sticky add to cart bar */
+sticky-add-to-cart,
+.sticky-add-to-cart,
+.sticky-add-to-cart__bar {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
 

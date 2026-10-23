@@ -256,6 +256,7 @@
               "blocks": {
                 "quantity": {
                   "type": "quantity",
+                  "disabled": true,
                   "static": true,
                   "settings": {
                     "input_style": "default",
@@ -280,6 +281,7 @@
                 },
                 "accelerated-checkout": {
                   "type": "accelerated-checkout",
+                  "disabled": true,
                   "static": true,
                   "settings": {},
                   "blocks": {}
@@ -481,7 +483,7 @@
         "equal_columns": false,
         "limit_details_width": false,
         "gap": 48,
-        "enable_sticky_add_to_cart": true,
+        "enable_sticky_add_to_cart": false,
         "background_color": "{{ settings.color_palette.background }}",
         "padding-block-start": 48,
         "padding-block-end": 48
@@ -618,11 +620,11 @@
         "max_products": 10,
         "columns": 5,
         "mobile_columns": "2",
-        "columns_gap": 16,
-        "rows_gap": 24,
+        "columns_gap": 24,
+        "rows_gap": 48,
         "icons_style": "chevron",
         "icons_shape": "circle",
-        "section_width": "full-width",
+        "section_width": "page-width",
         "gap": 20,
         "background_color": "",
         "padding-block-start": 40,

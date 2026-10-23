@@ -14,13 +14,8 @@
 {% liquid
   assign slideshow_ref = ref | default: 'resourceListCarousel'
 
-  if settings.section_width == 'page-width'
-    assign slideshow_gutters = 'start end'
-    assign gutter_style = '--gutter-slide-width: var(--util-page-margin-offset);'
-  else
-    assign slideshow_gutters = null
-    assign gutter_style = '--gutter-slide-width: 0px;'
-  endif
+  assign slideshow_gutters = 'start end'
+  assign gutter_style = '--gutter-slide-width: var(--util-page-margin-offset);'
 
   assign show_arrows = false
   if settings.icons_style != 'none'
@@ -100,7 +95,7 @@
   @container resource-list-carousel (min-width: 700px) {
     .resource-list__carousel .resource-list__slide {
       --section-slide-width: calc(
-        (100cqw - (var(--gutter-slide-width, 0px) * 2) - (var(--resource-list-column-gap, 2px) * (var(--column-count, 4) - 1))) /
+        (100cqw - (var(--gutter-slide-width, 0px) * 2) - (var(--resource-list-column-gap, 1.5rem) * (var(--column-count, 4) - 1))) /
           var(--column-count, 4)
       );
       --slide-width: var(--section-slide-width);
@@ -113,7 +108,7 @@
   @media screen and (min-width: 700px) {
     .resource-list__carousel .resource-list__slide {
       --section-slide-width: calc(
-        (100cqw - (var(--gutter-slide-width, 0px) * 2) - (var(--resource-list-column-gap, 2px) * (var(--column-count, 4) - 1))) /
+        (100cqw - (var(--gutter-slide-width, 0px) * 2) - (var(--resource-list-column-gap, 1.5rem) * (var(--column-count, 4) - 1))) /
           var(--column-count, 4)
       );
       --slide-width: var(--section-slide-width);
@@ -124,7 +119,9 @@
   }
 
   .resource-list__carousel > slideshow-container > slideshow-slides {
-    gap: 2px !important;
+    gap: var(--product-list-gap) !important;
+    row-gap: 3rem !important;
+    column-gap: 1.5rem !important;
     cursor: default;
     margin-block: 0 !important;
     padding-block: 0 !important;

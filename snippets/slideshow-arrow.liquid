@@ -39,6 +39,7 @@
     aria-label="{{ 'accessibility.slideshow_next' | t }}"
   {% endif %}
   on:click="/{{ action }}"
+  onpointerup="this.blur()"
   ref="{{ action }}"
 >
   {%- if icon_name == 'caret' -%}

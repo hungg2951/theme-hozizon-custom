@@ -8,6 +8,14 @@
 {% stylesheet %}
   .product-recommendations {
     display: block;
+    --product-list-gap: 3rem 1.5rem;
+  }
+
+  /* Spacing between items in You may also like */
+  .product-recommendations :is(.resource-list, .resource-list--grid, .resource-list__carousel > slideshow-container > slideshow-slides, slideshow-slides) {
+    gap: var(--product-list-gap) !important;
+    row-gap: 3rem !important;
+    column-gap: 1.5rem !important;
   }
 
   .product-recommendations__skeleton-item {
@@ -27,22 +35,41 @@
     display: none;
   }
 
-  /* Threadheads "You may also like" typography */
+  /* Threadheads "You may also like" typography and header spacing */
+  .product-recommendations .section-resource-list {
+    row-gap: 24px !important;
+  }
+
+  .product-recommendations .section-resource-list__content {
+    margin-bottom: 0 !important;
+  }
+
   .product-recommendations .text-block--text_cbcgyb :is(h1, h2, h3, h4),
   .product-recommendations .section-resource-list__content :is(h1, h2, h3, h4) {
     font-size: 26px !important;
     line-height: 1.25 !important;
     font-weight: 500 !important;
     color: #1a1a1a !important;
-    margin-block: 0 16px !important;
+    margin-block: 0 12px !important;
     letter-spacing: -0.01em !important;
   }
 
-  @media screen and (max-width: 749px) {
+  @media screen and (min-width: 1400px) {
     .product-recommendations .text-block--text_cbcgyb :is(h1, h2, h3, h4),
     .product-recommendations .section-resource-list__content :is(h1, h2, h3, h4) {
-      font-size: 22px !important;
-      margin-block-end: 12px !important;
+      font-size: 32px !important;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .product-recommendations .section-resource-list {
+      row-gap: 16px !important;
+    }
+
+    .product-recommendations .text-block--text_cbcgyb :is(h1, h2, h3, h4),
+    .product-recommendations .section-resource-list__content :is(h1, h2, h3, h4) {
+      font-size: 26px !important;
+      margin-block-end: 8px !important;
     }
   }
 
@@ -115,26 +142,36 @@
   }
 
   /* Carousel navigation arrows styling */
-  .product-recommendations slideshow-arrows {
-    position: absolute;
-    top: 40%;
-    bottom: auto;
-    inset-inline: 0;
-    pointer-events: none;
-    z-index: var(--layer-heightened, 3);
+  .product-recommendations slideshow-arrows,
+  .product-recommendations .resource-list__carousel slideshow-arrows {
+    position: absolute !important;
+    top: 56% !important;
+    bottom: auto !important;
+    inset-inline: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: auto !important;
+    transform: translateY(-50%) !important;
+    pointer-events: none !important;
+    z-index: var(--layer-heightened, 3) !important;
     mix-blend-mode: normal !important;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transform: translateY(-50%);
-    padding-inline: 12px;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding-inline: 20px !important;
   }
 
-  .product-recommendations slideshow-arrows .slideshow-control {
-    pointer-events: auto !important;
-    opacity: 1 !important;
-    width: 44px !important;
-    height: 44px !important;
+  .product-recommendations slideshow-arrows .slideshow-control,
+  .product-recommendations .resource-list__carousel slideshow-arrows .slideshow-control {
+    pointer-events: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    width: 56px !important;
+    height: 56px !important;
+    min-width: 56px !important;
+    min-height: 56px !important;
+    max-width: 56px !important;
+    max-height: 56px !important;
     background-color: #ffffff !important;
     color: #1a1a1a !important;
     border: 1px solid #e5e5e5 !important;
@@ -142,12 +179,37 @@
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
+    padding: 0 !important;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
-    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease !important;
+    transition: opacity 0.25s ease, visibility 0.25s ease, background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease !important;
     cursor: pointer !important;
+    animation: none !important;
   }
 
-  .product-recommendations slideshow-arrows .slideshow-control:hover {
+  /* Show arrows only when hovering over the product list block below */
+  .product-recommendations :is(.resource-list, .resource-list__carousel, slideshow-container, slideshow-component):hover slideshow-arrows .slideshow-control:not([disabled]) {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+
+  /* Force hide when not hovering, even if button was clicked or focused */
+  .product-recommendations :is(.resource-list, .resource-list__carousel, slideshow-container, slideshow-component):not(:hover) slideshow-arrows .slideshow-control {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  /* Hide all next/prev image buttons on individual product cards inside recommendations */
+  .product-recommendations :is(.product-card, .card-gallery, .resource-list__item) slideshow-arrows {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  /* Button hover effect - keep existing size & effect */
+  .product-recommendations slideshow-arrows .slideshow-control:not([disabled]):hover {
     background-color: #f7f7f7 !important;
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.16) !important;
     transform: scale(1.08) !important;
@@ -158,11 +220,20 @@
   .product-recommendations slideshow-arrows .slideshow-control .icon-caret {
     color: #1a1a1a !important;
     stroke: currentColor !important;
-    width: 18px !important;
-    height: 18px !important;
+    width: 20px !important;
+    height: 20px !important;
   }
 
   .product-recommendations slideshow-arrows .slideshow-control[disabled] {
     display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  @media (hover: none) and (pointer: coarse) {
+    .product-recommendations slideshow-arrows {
+      display: none !important;
+    }
   }
 {% endstylesheet %}

@@ -59,10 +59,16 @@
     --cursor: pointer;
   }
 
-  @media screen and (max-width: 749px) {
-    .product-card slideshow-arrows .slideshow-control {
-      display: none;
-    }
+  /* Hide all next/prev image buttons on individual product cards */
+  .product-card slideshow-arrows,
+  .card-gallery slideshow-arrows,
+  .product-grid__card slideshow-arrows,
+  product-card slideshow-arrows,
+  .resource-list__item slideshow-arrows {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
   }
 
   /* Threadheads product card info container: padding: 18px 36px 0px */
