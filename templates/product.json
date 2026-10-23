@@ -82,7 +82,7 @@
             "border_color": "",
             "border_radius": 0,
             "padding-block-start": 0,
-            "padding-block-end": 24,
+            "padding-block-end": 0,
             "padding-inline-start": 0,
             "padding-inline-end": 0
           },
@@ -157,7 +157,13 @@
                   "type": "shopify://apps/review-threadheads/blocks/rating-badge/01a13926-dd2a-77b2-ae9d-60ac70cad8d2",
                   "settings": {
                     "font_size": 14,
+                    "count_font_size": 14,
+                    "text_after_font_size": 14,
                     "star_size": 16,
+                    "count_format": "parentheses",
+                    "show_text_after_count": false,
+                    "text_after_count": "verified reviews",
+                    "underline": false,
                     "text_color": "#6b7280",
                     "star_color": "#f5a623",
                     "star_empty_color": "#d1d5db"
@@ -486,7 +492,7 @@
         "enable_sticky_add_to_cart": false,
         "background_color": "{{ settings.color_palette.background }}",
         "padding-block-start": 48,
-        "padding-block-end": 48
+        "padding-block-end": 0
       }
     },
     "product_recommendations_qggXJq": {
@@ -630,10 +636,76 @@
         "padding-block-start": 40,
         "padding-block-end": 40
       }
+    },
+    "1792733503477d3644": {
+      "type": "_blocks",
+      "blocks": {
+        "review_threadheads_reviews_main_7Am4pE": {
+          "type": "shopify://apps/review-threadheads/blocks/reviews-main/01a13926-dd2a-77b2-ae9d-60ac70cad8d2",
+          "settings": {
+            "heading": "Customer Reviews",
+            "empty_text": "No reviews yet. Be the first to review this product!",
+            "show_other_products_reviews": true,
+            "other_products_heading": "Reviews for other products",
+            "show_write_button": false,
+            "page_size": 10,
+            "include_modal": true,
+            "title_align": "left",
+            "title_font_size": 20,
+            "title_padding": 0,
+            "max_width": 1600,
+            "base_font_size": 15,
+            "star_size": 18,
+            "avatar_size": 36,
+            "hide_avatar": false,
+            "star_color": "#f5a623",
+            "star_empty_color": "#d1d5db",
+            "btn_bg_color": "#059669",
+            "btn_text_color": "#ffffff",
+            "btn_hover_color": "#047857",
+            "show_verified_badge": true,
+            "verified_badge_text": "Verified",
+            "verified_badge_font_size": 12,
+            "verified_badge_color": "#059669"
+          }
+        }
+      },
+      "block_order": [
+        "review_threadheads_reviews_main_7Am4pE"
+      ],
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "background_media": "none",
+        "background_color": "",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
     }
   },
   "order": [
     "main",
-    "product_recommendations_qggXJq"
+    "product_recommendations_qggXJq",
+    "1792733503477d3644"
   ]
 }
