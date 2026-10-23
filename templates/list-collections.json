@@ -17,7 +17,7 @@
           "name": "t:names.header",
           "settings": {
             "content_direction": "row",
-            "vertical_on_mobile": false,
+            "vertical_on_mobile": true,
             "horizontal_alignment": "space-between",
             "vertical_alignment": "center",
             "align_baseline": false,
@@ -188,7 +188,7 @@
           "name": "t:names.header",
           "settings": {
             "content_direction": "row",
-            "vertical_on_mobile": false,
+            "vertical_on_mobile": true,
             "horizontal_alignment": "space-between",
             "vertical_alignment": "center",
             "align_baseline": false,
@@ -359,7 +359,7 @@
           "name": "t:names.header",
           "settings": {
             "content_direction": "row",
-            "vertical_on_mobile": false,
+            "vertical_on_mobile": true,
             "horizontal_alignment": "space-between",
             "vertical_alignment": "center",
             "align_baseline": false,
@@ -530,7 +530,7 @@
           "name": "t:names.header",
           "settings": {
             "content_direction": "row",
-            "vertical_on_mobile": false,
+            "vertical_on_mobile": true,
             "horizontal_alignment": "space-between",
             "vertical_alignment": "center",
             "align_baseline": false,

@@ -257,7 +257,7 @@
   }
 
   /* Threadheads Section CTA Button matching Image 3 (a.th-featured__footer-cta) */
-  .section-resource-list__content {
+  .resource-list ~ .section-resource-list__content {
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
@@ -268,7 +268,7 @@
     padding-block: 0 !important;
   }
 
-  .section-resource-list__content :is(.button, .button-custom, a.button, a.button-custom, a) {
+  .section-resource-list__content :is(.button, .button-custom, a.button, a.button-custom, a):not(.button--view-all):not(.button-unstyled) {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -290,13 +290,13 @@
     transition: background-color 0.2s ease, transform 0.2s ease !important;
   }
 
-  .section-resource-list__content :is(.button, .button-custom, a.button, a.button-custom, a):hover {
+  .section-resource-list__content :is(.button, .button-custom, a.button, a.button-custom, a):not(.button--view-all):not(.button-unstyled):hover {
     background-color: #333333 !important;
     color: #ffffff !important;
     transform: translateY(-1px) !important;
   }
 
-  .section-resource-list__content :is(.button, .button-custom, a.button, a.button-custom, a) .button__text {
+  .section-resource-list__content :is(.button, .button-custom, a.button, a.button-custom, a):not(.button--view-all):not(.button-unstyled) .button__text {
     color: #ffffff !important;
     font-size: 15px !important;
     font-weight: 700 !important;

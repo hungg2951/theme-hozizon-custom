@@ -14,6 +14,7 @@ import { Component } from '@theme/component';
  */
 export class AnnouncementBar extends Component {
   #current = 0;
+  #isTransitioning = false;
 
   /**
    * The interval ID for automatic playback.
@@ -21,8 +22,27 @@ export class AnnouncementBar extends Component {
    */
   #interval = undefined;
 
+  get slides() {
+    const refSlides = this.refs.slides;
+    if (Array.isArray(refSlides) && refSlides.length) return refSlides;
+    if (refSlides instanceof HTMLElement) return [refSlides];
+    return Array.from(this.querySelectorAll('.announcement-bar__slide'));
+  }
+
   connectedCallback() {
     super.connectedCallback();
+
+    const slides = this.slides;
+    slides.forEach((slide, index) => {
+      if (index === 0) {
+        slide.classList.add('is-active');
+        slide.classList.remove('is-exiting');
+        slide.setAttribute('aria-hidden', 'false');
+      } else {
+        slide.classList.remove('is-active', 'is-exiting');
+        slide.setAttribute('aria-hidden', 'true');
+      }
+    });
 
     this.addEventListener('mouseenter', this.suspend);
     this.addEventListener('mouseleave', this.resume);
@@ -32,11 +52,60 @@ export class AnnouncementBar extends Component {
   }
 
   next() {
-    this.current += 1;
+    if (this.#isTransitioning) return;
+    this.goTo(this.#current + 1);
   }
 
   previous() {
-    this.current -= 1;
+    if (this.#isTransitioning) return;
+    this.goTo(this.#current - 1);
+  }
+
+  goTo(newIndex) {
+    const slides = this.slides;
+    if (slides.length <= 1) return;
+
+    let oldRelativeIndex = this.#current % slides.length;
+    if (oldRelativeIndex < 0) oldRelativeIndex += slides.length;
+
+    let relativeIndex = newIndex % slides.length;
+    if (relativeIndex < 0) relativeIndex += slides.length;
+
+    if (oldRelativeIndex === relativeIndex) return;
+
+    this.#isTransitioning = true;
+    this.#current = newIndex;
+
+    const oldSlide = slides[oldRelativeIndex];
+    const newSlide = slides[relativeIndex];
+
+    // Reset newSlide below the view without any transition
+    newSlide.style.transition = 'none';
+    newSlide.classList.remove('is-active', 'is-exiting');
+    newSlide.setAttribute('aria-hidden', 'true');
+    void newSlide.offsetHeight; // force reflow
+
+    // Restore CSS transition
+    newSlide.style.transition = '';
+
+    // Old slide slides up and fades out
+    oldSlide.classList.remove('is-active');
+    oldSlide.classList.add('is-exiting');
+    oldSlide.setAttribute('aria-hidden', 'true');
+
+    // New slide slides up from bottom and becomes active
+    newSlide.classList.add('is-active');
+    newSlide.setAttribute('aria-hidden', 'false');
+
+    // After animation completes (500ms): silently reset oldSlide
+    setTimeout(() => {
+      oldSlide.style.transition = 'none';
+      oldSlide.classList.remove('is-exiting');
+      void oldSlide.offsetHeight; // force reflow
+      oldSlide.style.transition = '';
+
+      this.#isTransitioning = false;
+    }, 520);
   }
 
   /**
@@ -107,16 +176,7 @@ export class AnnouncementBar extends Component {
   }
 
   set current(current) {
-    this.#current = current;
-
-    let relativeIndex = current % (this.refs.slides ?? []).length;
-    if (relativeIndex < 0) {
-      relativeIndex += (this.refs.slides ?? []).length;
-    }
-
-    this.refs.slides?.forEach((slide, index) => {
-      slide.setAttribute('aria-hidden', `${index !== relativeIndex}`);
-    });
+    this.goTo(current);
   }
 
   /**

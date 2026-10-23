@@ -23,11 +23,20 @@
   if settings.vertical_on_mobile and vertical_alignment == 'last baseline'
     assign vertical_alignment_mobile = 'flex-end'
   endif
+
+  assign horizontal_alignment_mobile = horizontal_alignment
+  if settings.vertical_on_mobile
+    if settings.horizontal_alignment_flex_direction_column != blank
+      assign horizontal_alignment_mobile = settings.horizontal_alignment_flex_direction_column
+    else
+      assign horizontal_alignment_mobile = 'flex-start'
+    endif
+  endif
 -%}
 
 --flex-direction: {{ settings.content_direction | default: 'column' }}; --flex-wrap: nowrap; --flex-wrap-mobile: wrap;
 
 {% render 'gap-style', value: settings.gap %}
 
---horizontal-alignment: {{ horizontal_alignment }}; --vertical-alignment: {{ vertical_alignment }};
+--horizontal-alignment: {{ horizontal_alignment }}; --horizontal-alignment-mobile: {{ horizontal_alignment_mobile }}; --vertical-alignment: {{ vertical_alignment }};
 --vertical-alignment-mobile: {{ vertical_alignment_mobile }};

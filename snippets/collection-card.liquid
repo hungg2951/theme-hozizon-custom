@@ -72,8 +72,8 @@
     {{ card_image }}
     <div class="collection-card__content layout-panel-flex--column">
       <div class="collection-card__hover-btn" aria-hidden="true">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="9 18 15 12 9 6"></polyline>
+        <svg role="presentation" focusable="false" width="40" height="40" class="icon icon-circle-button-right-clipped" viewBox="0 0 24 24">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M12 24c6.627 0 12-5.373 12-12S18.627 0 12 0 0 5.373 0 12s5.373 12 12 12ZM10.47 9.53 12.94 12l-2.47 2.47 1.06 1.06 3-3 .53-.53-.53-.53-3-3-1.06 1.06Z" fill="currentColor"></path>
         </svg>
       </div>
       {{ children }}
@@ -176,22 +176,57 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    background-color: #ffffff;
-    color: #000000;
+    background-color: #000000;
+    color: #ffffff;
     opacity: 0;
-    transform: translateY(8px);
-    transition: opacity 0.25s ease, transform 0.25s ease;
+    transform: translateY(-10px) scale(0.9);
+    transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease, color 0.2s ease;
     margin-bottom: 14px;
     flex-shrink: 0;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+    pointer-events: none;
+    will-change: opacity, transform;
   }
 
   .collection-card:hover .collection-card__hover-btn {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
+  }
+
+  .collection-card__hover-btn:hover {
+    background-color: #ffffff;
+    color: #000000;
+    transform: translateY(0) scale(1.08);
+  }
+
+  .collection-card__hover-btn svg,
+  .collection-card__hover-btn .icon-circle-button-right-clipped {
+    display: block;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+  }
+
+  /* Smooth push-down effect on text below button when card is hovered */
+  .collection-card.collection-card--image-bg .collection-card__content > :not(.collection-card__hover-btn) {
+    transform: translateY(-14px);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
+  }
+
+  .collection-card.collection-card--image-bg:hover .collection-card__content > :not(.collection-card__hover-btn) {
+    transform: translateY(2px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .collection-card__hover-btn,
+    .collection-card.collection-card--image-bg .collection-card__content > :not(.collection-card__hover-btn) {
+      transition: none !important;
+      transform: none !important;
+    }
   }
 
   .collection-card.collection-card--image-bg .collection-card__content p,
@@ -200,7 +235,7 @@
   .collection-card.collection-card--image-bg .collection-card__content .text-block {
     font-family: var(--font-heading--family), "Helvetica Neue", Helvetica, Arial, sans-serif !important;
     font-size: 26px !important;
-    font-weight: 700 !important;
+    font-weight: 500 !important;
     line-height: 1.2 !important;
     letter-spacing: -0.01em !important;
     color: #ffffff !important;

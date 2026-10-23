@@ -17,7 +17,7 @@
         "announcement_1": {
           "type": "_announcement",
           "settings": {
-            "text": "Last call for free socks 👀 Buy 2+ tees before it’s over",
+            "text": "Fast worldwide shipping!",
             "link": "shopify://collections/all",
             "font": "var(--font-heading--family)",
             "font_size": "0.75rem",
@@ -65,12 +65,12 @@
       "name": "t:names.announcement_bar",
       "settings": {
         "speed": 4,
-        "section_width": "page-width",
-        "background_color": "#1a1a1a",
+        "section_width": "full-width",
+        "background_color": "#000000",
         "divider_width": 0,
         "divider_color": "{{ settings.color_palette.color2 }}",
-        "padding-block-start": 8,
-        "padding-block-end": 8
+        "padding-block-start": 0,
+        "padding-block-end": 0
       }
     },
     "header_section": {

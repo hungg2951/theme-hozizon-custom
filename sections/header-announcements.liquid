@@ -30,98 +30,232 @@
       autoplay="{{ section.settings.speed }}" aria-live="polite"
     {% endif %}
   >
-    {% if show_arrows %}
-      {% render 'slideshow-arrows', icon_style: 'chevron' %}
-    {% endif %}
-
     <div class="announcement-bar__slides">
       {% content_for 'blocks' %}
     </div>
+
+    {% if show_arrows %}
+      <button
+        type="button"
+        class="announcement-bar__control announcement-bar__control--previous"
+        aria-label="{{ 'accessibility.slideshow_previous' | t }}"
+        on:click="/previous"
+        onpointerup="this.blur()"
+        ref="previous"
+      >
+        <svg role="presentation" focusable="false" width="7" height="10" class="icon icon-chevron-left reverse-icon" viewBox="0 0 7 10">
+          <path d="M6 1 2 5l4 4" fill="none" stroke="currentColor" stroke-width="2"></path>
+        </svg>
+      </button>
+
+      <button
+        type="button"
+        class="announcement-bar__control announcement-bar__control--next"
+        aria-label="{{ 'accessibility.slideshow_next' | t }}"
+        on:click="/next"
+        onpointerup="this.blur()"
+        ref="next"
+      >
+        <svg role="presentation" focusable="false" width="7" height="10" class="icon icon-chevron-right reverse-icon" viewBox="0 0 7 10">
+          <path d="m1 9 4-4-4-4" fill="none" stroke="currentColor" stroke-width="2"></path>
+        </svg>
+      </button>
+    {% endif %}
   </announcement-bar-component>
 </aside>
 
 {% stylesheet %}
   .announcement-bar {
-    border-block-end: var(--border-bottom-width) solid var(--color-border);
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    max-height: 36px !important;
+    padding-block: 0 !important;
+    border-block-end: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+    position: relative !important;
+  }
+
+  .announcement-bar .section-background {
+    background-color: #000000 !important;
   }
 
   .announcement-bar__slider {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    position: relative;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    width: 100% !important;
+    max-width: 450px !important;
+    margin-inline: auto !important;
+    height: 36px !important;
+    box-sizing: border-box !important;
+    padding-inline: 36px !important;
+  }
 
-    @media screen and (max-width: 749px) {
-      grid-column: 1 / -1;
+  .announcement-bar__control {
+    position: absolute !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    opacity: 1 !important;
+    z-index: 5 !important;
+    -webkit-tap-highlight-color: transparent !important;
+    user-select: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .announcement-bar__control:hover,
+  .announcement-bar__control:focus,
+  .announcement-bar__control:focus-visible,
+  .announcement-bar__control:active {
+    outline: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    border: none !important;
+    transform: translateY(-50%) !important;
+    opacity: 1 !important;
+    color: #ffffff !important;
+    transition: none !important;
+    animation: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  .announcement-bar__control--previous {
+    left: 0 !important;
+  }
+
+  .announcement-bar__control--next {
+    right: 0 !important;
+  }
+
+  .announcement-bar__control svg {
+    display: block !important;
+    width: 7px !important;
+    height: 10px !important;
+    color: #ffffff !important;
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .announcement-bar__control svg path {
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 2 !important;
+    transition: none !important;
+    animation: none !important;
+  }
+
+  @media screen and (max-width: 749px) {
+    .announcement-bar__slider {
+      max-width: 100% !important;
+      padding-inline: 36px !important;
+    }
+
+    .announcement-bar__control--previous {
+      left: 6px !important;
+    }
+
+    .announcement-bar__control--next {
+      right: 6px !important;
     }
   }
 
   .announcement-bar__slides {
-    display: grid;
-    grid: [stack] auto / [stack] auto;
-    width: calc(100% - var(--button-size) * 2);
-    max-width: 680px;
-    margin-inline: auto;
-  }
-
-  .announcement-bar__slides > * {
-    grid-area: stack;
-  }
-
-  .announcement-bar__slide {
-    transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
-    content-visibility: visible;
-
-    &[aria-hidden='true'] {
-      opacity: 0;
-      visibility: hidden;
-    }
-  }
-
-  .announcement-bar__slider slideshow-arrows {
-    padding: 0;
-    mix-blend-mode: normal;
-  }
-
-  .announcement-bar__slider slideshow-arrows .slideshow-control {
-    color: var(--color-foreground);
-  }
-
-  .announcement-bar__slider .slideshow-control {
-    display: flex;
-    padding: 0;
-    width: var(--button-size);
-    height: var(--button-size);
-    align-items: center;
-    justify-content: center;
-    opacity: 1;
-    animation: none;
-
-    @media screen and (min-width: 750px) {
-      --slideshow-control-offset: calc((var(--button-size) - var(--icon-size-xs)) / 2);
-
-      .section--page-width &.slideshow-control--previous {
-        transform: translateX(var(--slideshow-control-offset));
-      }
-    }
-  }
-
-  .announcement-bar__slider .slideshow-control .svg-wrapper {
-    width: var(--icon-size-xs);
-    height: var(--icon-size-xs);
+    position: relative !important;
+    overflow: hidden !important;
+    height: 36px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-inline: auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
 
   .announcement-bar__slide {
-    place-content: center;
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    margin: 0 auto !important;
+    content-visibility: visible !important;
+    pointer-events: none !important;
+    transform: translateY(100%) !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transition: none !important;
+  }
+
+  /* Default initial visible slide & active slide */
+  .announcement-bar__slide.is-active,
+  .announcement-bar__slide[aria-hidden='false']:not(.is-exiting) {
+    transform: translateY(0%) !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    z-index: 2 !important;
+    transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1) !important;
+  }
+
+  /* Animated exiting slide (chữ hiện tại chạy lên và mờ dần) */
+  .announcement-bar__slide.is-exiting {
+    transform: translateY(-100%) !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    z-index: 1 !important;
+    transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1) !important;
+  }
+
+  .announcement-bar__text {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    line-height: 36px !important;
+    letter-spacing: normal !important;
+    color: #ffffff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
   }
 
   .announcement-bar__text:first-child {
-    margin: 0;
+    margin: 0 !important;
   }
 
   .announcement-bar__link {
-    position: absolute;
-    inset: 0;
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 1 !important;
   }
 {% endstylesheet %}
 
